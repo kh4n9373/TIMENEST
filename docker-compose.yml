@@ -1,0 +1,48 @@
+version: '3.9'
+
+services:
+  # chatbot-service:
+  #   build: .
+  #   container_name: chatbot-service
+  #   working_dir: /app/src
+  #   command: python chatbot.py
+  #   env_file:
+  #     - .env
+  #   ports:
+  #     - "127.0.0.1:8034:8001"  
+  #   volumes:
+  #     - ./src:/app/chatbot  
+  #   depends_on:
+  #     - login-service
+  #     - main-service
+  #   networks:
+  #     - net
+
+  login-service:
+    build: .
+    container_name: login-service
+    working_dir: /app/src
+    command: python app.py
+    ports:
+      - "127.0.0.1:5001:8002"  
+    volumes:
+      - ./src:/app/app  
+    networks:
+      - net
+
+  # main-service:
+  #   build: .
+  #   container_name: main-service
+  #   working_dir: /app/src
+  #   command: python main.py
+  #   env_file:
+  #     - .env
+  #   ports:
+  #     - "127.0.0.1:5004:8003"  
+  #   volumes:
+  #     - ./src:/app/main 
+  #   networks:
+  #     - net
+networks:
+  net:
+    name: timenest_service

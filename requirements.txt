@@ -1,0 +1,10 @@
+pymongo==4.9.1
+flask==3.0.2
+fastapi==0.110.0
+langchain==0.1.12
+langchain-community==0.0.29
+openai==1.14.2
+uvicorn==0.28.0
+python-dotenv
+google-auth==1.27.0
+google-auth-oauthlib==0.4.2

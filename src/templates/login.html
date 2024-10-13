@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="static/TIMENEST-05.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Catamaran:wght@100..900&family=Outfit:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="/static/styles/style_login.css" />
+  <title>Timenest: Login Page</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+</head>
+
+<body>
+    <div class="container" id="container">
+        <div class="form-container sign-up">
+            <form id="signUpForm">
+                <h1>Create Account</h1>
+                <input type="text" id="signUpUsername" name="username" placeholder="Username" required>
+                <input type="password" id="signUpPassword" name="password" placeholder="Password" required>
+                <input type="password" id="signUpConfirmPassword" name="confirm_password" placeholder="Re-enter Password" required>
+                <button type="submit">Sign Up</button>
+                <p id="signUpResponse"></p>
+            </form>
+        </div>
+        <div class="form-container sign-in">
+            <form id="loginForm">
+                <h1>Sign In</h1>
+                <input type="text" id="loginUsername" name="username" placeholder="Username" required>
+                <input type="password" id="loginPassword" name="password" placeholder="Password" required>
+                <a href="#">Forget Your Password?</a>
+                <button type="submit">Log In</button>
+                <a>Or</a>
+                <div id="g_id_onload"
+                    data-client_id="599747444234-m3rl7f6gmh7k2dikk2uhaka06g05113k.apps.googleusercontent.com"
+                    data-callback="handleCredentialResponse">
+                </div>
+                <div class="g_id_signin" data-type="standard"></div>
+            </form>
+        </div>
+        <div class="toggle-container">
+            <div class="toggle">
+                <div class="toggle-panel toggle-left">
+                    <a href="#hero"><img src="/static/Logo_Landing.svg" alt="timenest"></a>
+                    <p>Enter your personal details to use all of site features</p>
+                    <button class="hidden" id="login">Log In</button>
+                </div>
+                <div class="toggle-panel toggle-right">
+                    <a href="#hero"><img src="/static/Logo_Landing.svg" alt="timenest"></a>
+                    <p>Register with your personal details to use all of site features</p>
+                    <button class="hidden" id="register">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Handle Sign Up Form Submission
+        document.getElementById("signUpForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById("signUpUsername").value;
+            const password = document.getElementById("signUpPassword").value;
+            const confirmPassword = document.getElementById("signUpConfirmPassword").value;
+
+            const response = await fetch("/create-account", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ username, password, confirm_password: confirmPassword })
+            });
+
+            const result = await response.json();
+            document.getElementById("signUpResponse").textContent = result.message || result.error;
+        });
+
+        // Handle Login Form Submission
+        document.getElementById("loginForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById("loginUsername").value;
+            const password = document.getElementById("loginPassword").value;
+
+            const response = await fetch("/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ username, password })
+            });
+
+            const result = await response.json();
+            document.getElementById("loginResponse").textContent = result.message || result.error;
+            
+            // if (response.status === 201) {
+            //     alert(data.message); // Display success message in a pop-up
+            // } else {
+            //     alert(data.error); // Display error message in a pop-up
+            // }
+            if (response.ok && result.userID) {
+                // const url = `http://localhost:5004?username=${encodeURIComponent(username)}&record=${encodeURIComponent(result.userID)}`;
+                const url = `/calendar?username=${encodeURIComponent(username)}&record=${encodeURIComponent(result.userID)}`;
+                // const url = 'main.html';
+                window.location.href = url;
+            }
+        });
+        
+        const container = document.getElementById('container');
+        const registerBtn = document.getElementById('register');
+        const loginBtn = document.getElementById('login');
+        const ggauthenBtn = document.getElementById('googleSignIn');
+
+        registerBtn.addEventListener('click', () => {
+            container.classList.add("active");
+        });
+
+        loginBtn.addEventListener('click', () => {
+            container.classList.remove("active");
+        });
+        ggauthenBtn.addEventListener('click',() => {
+            alert('Function is finishing...');
+        })
+    </script>
+    <script>
+        function handleCredentialResponse(response) {
+            fetch('/callback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({id_token: response.credential})
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                if (data.status === 'success') {
+                    // Redirect to calendar page
+                    const url = `/calendar?username=${encodeURIComponent(data.name)}&record=${encodeURIComponent(data.user_id)}`;
+                    window.location.href = url;
+                } else {
+                    alert('Authentication failed: ' + data.message);
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('Authentication failed.');
+            });
+        }
+    </script>
+</body>
+</html>

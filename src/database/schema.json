@@ -1,0 +1,36 @@
+{
+    "users": {
+        "UserID": "long",
+        "UserName": "string",
+        "Password": "string",   
+        "CalendarID": "long",
+        "groups": "ArrayList<GroupID>",
+        "admins":"ArrayList<GroupID",
+        "tasks":"ArrayList<TaskID>"
+    },
+    "groups": {
+        "GroupID": "long",
+        "GroupName": "string",
+        "Users": "ArrayList<UserID>"  
+    },
+
+    "tasks": {
+        "userID":"userID",
+        "TaskID": "long",
+        "TaskName": "string",
+        "StartTime": "datetime",
+        "EndTime": "datetime",
+        "Status": "string",
+        "Description": "string",
+        "Color": "string",
+        "Subtasks": "ArrayList<TaskID>",  
+        "Notes": "string" 
+    },
+    "subtasks": {
+        "ParentTaskID": "TaskID", 
+        "SubtaskID": "long",
+        "Order": "int",
+        "Title": "string",  
+        "ParentTaskName": "string"
+    }
+}
