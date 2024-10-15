@@ -96,21 +96,23 @@
             });
 
             const result = await response.json();
-            
+
             // if (response.status === 201) {
             //     alert(data.message); // Display success message in a pop-up
             // } else {
             //     alert(data.error); // Display error message in a pop-up
             // }
             if (response.ok && result.userID) {
+                console.log(3)
                 // const url = `http://localhost:5004?username=${encodeURIComponent(username)}&record=${encodeURIComponent(result.userID)}`;
                 const url = `/calendar?username=${encodeURIComponent(username)}&record=${encodeURIComponent(result.userID)}`;
                 // const url = 'main.html';
+                console.log(url);
                 window.location.href = url;
             }
         });
         
-        const container = document.getElementById('container');
+        const container = document.getElementById('container'); 
         const registerBtn = document.getElementById('register');
         const loginBtn = document.getElementById('login');
         const ggauthenBtn = document.getElementById('googleSignIn');

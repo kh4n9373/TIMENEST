@@ -16,14 +16,6 @@
             "startTime": "2024-10-13T19:15:00.000Z",
             "endTime": "2024-10-13T21:00:00.000Z",
             "taskcolor": "#3a88fe"
-        },
-        {
-            "userID": "45ed646a13702d67b5adc8ddbfec8449e4278dbc06922fc52f6acc545e1f068b",
-            "taskName": "Meeting",
-            "taskDescription": "gg",
-            "startTime": "2024-10-13T23:00:00.000Z",
-            "endTime": "2024-10-14T01:00:00.000Z",
-            "taskcolor": "#000000"
         }
     ],
     "group": [],
