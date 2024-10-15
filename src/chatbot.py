@@ -44,7 +44,8 @@ class Prompt(BaseModel):
     input: str
 client = OpenAI(api_key=TOGETHER_API_KEY, base_url='https://api.together.xyz/v1')
 
-DEFAULT_MODEL = "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo"
+# DEFAULT_MODEL = "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo"
+DEFAULT_MODEL = "Qwen/Qwen2.5-72B-Instruct-Turbo"
 
 
 
