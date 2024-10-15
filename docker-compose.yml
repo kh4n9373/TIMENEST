@@ -24,7 +24,9 @@ services:
     working_dir: /app/src
     command: python app.py
     ports:
-      - "5001:8002"  
+
+      - "127.0.0.1:5001:5001"  
+
     volumes:
       - ./src:/app/app  
     networks:

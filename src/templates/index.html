@@ -131,29 +131,43 @@
     let lastScrollTop = 0;
     const navbar = document.getElementById('navbar');
 
-    // Initial check when the page loads or reloads
-    if (window.pageYOffset === 0) {
-        navbar.style.backgroundColor = 'transparent';
-    } else {
-        navbar.style.backgroundColor = '#3148e6'; // Set the original background color
-    }
-
-    window.addEventListener('scroll', function() {
+    // Scroll event listener
+    window.addEventListener('scroll', function () {
         let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
-        if (scrollTop === 0) {
+        window.requestAnimationFrame(() => {
+            // Make the background transparent at the top of the page
+            if (scrollTop === 0) {
+                navbar.style.backgroundColor = 'transparent';
+                navbar.style.top = '0'; // Ensure the navbar stays fixed at the top
+                navbar.style.boxShadow = 'none'; // Optional: remove shadow at the top
+            } else {
+                navbar.style.backgroundColor = '#3148e6'; // Add background when scrolling
+                navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)'; // Add shadow when scrolling
+            }
+
+            // Hide navbar when scrolling down
+            if (scrollTop > lastScrollTop && scrollTop > 0) {
+                navbar.style.top = '-140px'; // Hide navbar on scroll down
+            } else {
+                navbar.style.top = '0'; // Show navbar on scroll up
+            }
+
+            lastScrollTop = scrollTop;
+        });
+    });
+
+    // Ensure the correct background color is set when the page is loaded or refreshed
+    document.addEventListener('DOMContentLoaded', () => {
+        if (window.pageYOffset === 0) {
             navbar.style.backgroundColor = 'transparent';
+            navbar.style.top = '0'; // Ensure navbar is visible at the top when page loads
+            navbar.style.boxShadow = 'none'; // Remove shadow at the top
         } else {
-            navbar.style.backgroundColor = '#3148e6'; // Reset to the original background color
+            navbar.style.backgroundColor = '#3148e6';
+            navbar.style.top = '0'; // Keep the navbar visible
+            navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
         }
-
-        if (scrollTop > lastScrollTop) {
-            navbar.style.top = '-140px'; // Hide navbar when scrolling down
-        } else {
-            navbar.style.top = '0'; // Show navbar when scrolling up
-        }
-
-        lastScrollTop = scrollTop;
     });
 
     const scrollers = document.querySelectorAll(".scroller");
