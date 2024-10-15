@@ -22,6 +22,8 @@ services:
     build: .
     container_name: login-service
     working_dir: /app/src
+    env_file:
+      - .env
     command: python app.py
     ports:
 

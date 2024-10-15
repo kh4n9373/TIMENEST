@@ -10,7 +10,8 @@ import google.auth.transport.requests
 import pathlib
 from google.auth.transport import requests
 from config.config_env import GOOGLE_CLIENT_ID
-
+from datetime import datetime, timedelta
+from dateutil import parser
 
 
 app = Flask(__name__)
@@ -71,18 +72,61 @@ def create_account():
     return jsonify({"message": "Account created successfully"}), 201
 
 
+# @app.route('/get-user-metadata', methods=['GET'])
+# def get_user_metadata():
+#     try:
+#         userID = request.args.get("userID")
+#         print(f'GETTING {userID} information')
+#         metadata = mongo_client.find_info(userID)
+#         print(metadata)
+#         return jsonify(metadata),200
+#     except Exception as e:
+#         return jsonify({'message':f'Internal server error: {e}'}), 500
+
 @app.route('/get-user-metadata', methods=['GET'])
 def get_user_metadata():
     try:
         userID = request.args.get("userID")
         print(f'GETTING {userID} information')
         metadata = mongo_client.find_info(userID)
-        # print(metadata)
-        return jsonify(metadata),200
+        
+        # Convert times for each task
+        if 'tasks' in metadata:
+            for task in metadata['tasks']:
+                if 'startTime' in task:
+                    start_time_utc = parser.isoparse(task['startTime'])
+                    start_time_ict = start_time_utc - timedelta(hours=7)
+                    task['startTime'] = start_time_ict.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+                
+                if 'endTime' in task:
+                    end_time_utc = parser.isoparse(task['endTime'])
+                    end_time_ict = end_time_utc - timedelta(hours=7)
+                    task['endTime'] = end_time_ict.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+        
+        print(metadata)
+        return jsonify(metadata), 200
     except Exception as e:
         return jsonify({'message':f'Internal server error: {e}'}), 500
 
-@app.route('/add-task',methods=['POST'])
+# @app.route('/add-task',methods=['POST'])
+# def add_task():
+#     data = request.json
+#     print(data)
+#     userID = data.get("userID")
+#     taskName = data.get("taskName")
+#     taskDescription = data.get("taskDescription")
+#     startTime = data.get("startTime")
+#     endTime = data.get("endTime")
+#     color = data.get("taskColor")
+#     if not all([taskName, startTime, endTime]):
+#         return jsonify({'error': 'Missing required fields'}), 400
+#     mongo_client.insert_one('tasks',{'userID':userID,'taskName':taskName,'taskDescription':taskDescription,'startTime':startTime,'endTime':endTime,'taskcolor':color})
+#     trigger_metadata(userID)
+#     return jsonify({'message':'add task successfully'})
+from datetime import datetime, timedelta
+from dateutil import parser
+
+@app.route('/add-task', methods=['POST'])
 def add_task():
     data = request.json
     print(data)
@@ -92,12 +136,36 @@ def add_task():
     startTime = data.get("startTime")
     endTime = data.get("endTime")
     color = data.get("taskColor")
+
     if not all([taskName, startTime, endTime]):
         return jsonify({'error': 'Missing required fields'}), 400
-    mongo_client.insert_one('tasks',{'userID':userID,'taskName':taskName,'taskDescription':taskDescription,'startTime':startTime,'endTime':endTime,'taskcolor':color})
-    trigger_metadata(userID)
-    return jsonify({'message':'add task successfully'})
 
+    # Convert startTime and endTime from UTC to ICT
+    try:
+        startTime_utc = parser.isoparse(startTime)
+        endTime_utc = parser.isoparse(endTime)
+
+        startTime_ict = startTime_utc + timedelta(hours=7)
+        endTime_ict = endTime_utc + timedelta(hours=7)
+
+        # Format the ICT times as strings
+        startTime_ict_str = startTime_ict.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+        endTime_ict_str = endTime_ict.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+
+    except ValueError:
+        return jsonify({'error': 'Invalid time format'}), 400
+
+    mongo_client.insert_one('tasks', {
+        'userID': userID,
+        'taskName': taskName,
+        'taskDescription': taskDescription,
+        'startTime': startTime_ict_str,
+        'endTime': endTime_ict_str,
+        'taskcolor': color
+    })
+    
+    trigger_metadata(userID)
+    return jsonify({'message': 'add task successfully'})
 
 @app.route('/delete-task',methods=['DELETE'])
 def delete_task():

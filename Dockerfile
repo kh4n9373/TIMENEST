@@ -12,8 +12,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the application files to /app/
 COPY . .
 
+COPY .env .env
+
 # Set the working directory to /app/src, assuming the main.py is located there
 WORKDIR /app/src
 
 # Command to run the application
-CMD ["python", "main.py"]
+CMD ["python", "app.py"]

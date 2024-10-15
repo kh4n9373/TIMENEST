@@ -1,0 +1,4 @@
+# flyctl launch added from .gitignore
+**/venv
+**/src/client_secret.json
+fly.toml

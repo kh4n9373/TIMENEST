@@ -985,6 +985,13 @@
         #workspace-display {
           margin-right: 8.5rem;
         }
+        .timestamp {
+            text-align: center;
+            padding: 5px 10px;
+            color: #a0a0a0;
+            font-size: 0.8em;
+            margin: 10px 0;
+        }
     </style>
     <body>
         
@@ -1683,7 +1690,7 @@
                   document.getElementById('createTaskForm').reset();
                 };
                 function addTask(taskData) {
-                        console.log(1234)
+                        console.log("task Data to api: ",taskData)
                         // fetch('http://localhost:5004/add-task', {
                         fetch('/add-task', {
                             method: 'POST',
@@ -1742,9 +1749,14 @@
                   // Lấy thời gian bắt đầu và kết thúc
                   const startTimeValue = startTimeInput.value; // Giá trị thời gian bắt đầu (datetime)
                   const endTimeValue = endTimeInput.value; // Giá trị thời gian kết thúc (datetime)
-              
+                  console.log('Gia tri thoi gian bat dau: ',startTimeValue);
+                  console.log('Gia tri thoi gian ket thuc: ',endTimeValue);
+
                   const startTime = new Date(startTimeValue);
                   const endTime = new Date(endTimeValue);
+                  console.log('Gia tri start sau chuyen doi: ',startTime);
+                  console.log('Gia tri end sau chuyen doi: ', endTime);
+            
               
                   // Task Time
                   const taskTime = document.createElement('p');
@@ -1765,7 +1777,7 @@
                         endTime: endTime,
           
                     };
-                  console.log(taskData)
+                  console.log("Task Data here:", taskData)
                   addTask(taskData);
               
                   // Create Delete Button
@@ -1861,19 +1873,153 @@
                 dayElement.textContent = formatDate(currentDate);
               });
               
+              // document.addEventListener('DOMContentLoaded', function () {
+              //   const chatWindow = document.querySelector('.chat-window');
+              //   const inputField = document.querySelector('.input-area input');
+              //   const sendButton = document.querySelector('.input-area button');
+
+              //   function addMessage(message, isUser = false) {
+              //     const messageDiv = document.createElement('div');
+              //     messageDiv.className = isUser ? 'user-message' : 'bot-message';
+              //     messageDiv.innerHTML = `<p>${message}</p>`;
+              //     chatWindow.appendChild(messageDiv);
+              //     chatWindow.scrollTop = chatWindow.scrollHeight;
+              //   }
+              
+              //   function addTypingIndicator() {
+              //     const typingDiv = document.createElement('div');
+              //     typingDiv.className = 'bot-message typing-indicator';
+              //     typingDiv.innerHTML =
+              //       '<div class="typing-bubble"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+              //     chatWindow.appendChild(typingDiv);
+              //     chatWindow.scrollTop = chatWindow.scrollHeight;
+              //   }
+              
+              //   function removeTypingIndicator() {
+              //     const typingIndicator = document.querySelector('.typing-indicator');
+              //     if (typingIndicator) {
+              //       typingIndicator.remove();
+              //     }
+              //   }
+              
+              //   async function handleUserInput() {
+              //     const userMessage = inputField.value.trim();
+              //     if (userMessage) {
+              //       console.log(userMessage);
+              //       addMessage(userMessage, true);
+              //       inputField.value = '';
+              
+              //       // Add typing indicator
+              //       addTypingIndicator();
+              
+              //       try {
+              //         // const response = await fetch(`http://localhost:8034/infer`, {
+              //         const response = await fetch(`/infer`, {
+                    
+              //           method: 'POST',
+              //           headers: {
+              //             'Content-Type': 'application/json',
+              //           },
+              //           body: JSON.stringify({ input: userMessage ,ID: userID}),
+              //         });
+              
+              //         if (!response.ok) {
+              //           throw new Error(`HTTP error! status: ${response.status}`);
+              //         }
+              
+              //         const data = await response.json();
+              
+              //         // Remove typing indicator before adding the bot's response
+              //         removeTypingIndicator();
+              //         addMessage(data.response);
+              //       } catch (error) {
+              //         console.error('Error:', error);
+              
+              //         // Remove typing indicator before adding the error message
+              //         removeTypingIndicator();
+              //         addMessage('Sorry, there was an error processing your message.');
+              //       }
+              //     }
+              //   }
+              
+              //   sendButton.addEventListener('click', handleUserInput);
+              
+              //   inputField.addEventListener('keypress', function (e) {
+              //     if (e.key === 'Enter') {
+              //       handleUserInput();
+              //     }
+              //   });
+              // });
+              function addDateTimeIndicator() {
+                  const dateTimeDiv = document.createElement('div');
+                  dateTimeDiv.className = 'timestamp';
+                  const now = new Date();
+                  const options = { 
+                      weekday: 'short',
+                      hour: '2-digit', 
+                      minute: '2-digit'
+                  };
+                  dateTimeDiv.textContent = now.toLocaleString('en-US', options);
+                  
+                  // Insert after the first message
+                  const firstMessage = chatWindow.querySelector('.bot-message, .user-message');
+                  if (firstMessage) {
+                      firstMessage.insertAdjacentElement('afterend', dateTimeDiv);
+                  } else {
+                      chatWindow.appendChild(dateTimeDiv);
+                  }
+              }
               document.addEventListener('DOMContentLoaded', function () {
                 const chatWindow = document.querySelector('.chat-window');
                 const inputField = document.querySelector('.input-area input');
                 const sendButton = document.querySelector('.input-area button');
-              
-                function addMessage(message, isUser = false) {
+
+                // Function to save conversation to local storage
+                function saveConversation() {
+                  const messages = Array.from(chatWindow.children).map(child => {
+                    if (child.classList.contains('timestamp')) {
+                      return { type: 'timestamp', text: child.textContent };
+                    } else {
+                      return {
+                        type: 'message',
+                        text: child.querySelector('p').textContent,
+                        isUser: child.classList.contains('user-message')
+                      };
+                    }
+                  });
+                  localStorage.setItem('chatConversation', JSON.stringify(messages));
+                }
+
+                // Function to load conversation from local storage
+                function loadConversation() {
+                  const savedConversation = localStorage.getItem('chatConversation');
+                  if (savedConversation) {
+                    const messages = JSON.parse(savedConversation);
+                    chatWindow.innerHTML = ''; // Clear existing messages
+                    messages.forEach(item => {
+                      if (item.type === 'timestamp') {
+                        const dateTimeDiv = document.createElement('div');
+                        dateTimeDiv.className = 'timestamp';
+                        dateTimeDiv.textContent = item.text;
+                        chatWindow.appendChild(dateTimeDiv);
+                      } else {
+                        addMessage(item.text, item.isUser, false);
+                      }
+                    });
+                  }
+                }
+                function addMessage(message, isUser = false, shouldSave = true) {
                   const messageDiv = document.createElement('div');
                   messageDiv.className = isUser ? 'user-message' : 'bot-message';
                   messageDiv.innerHTML = `<p>${message}</p>`;
                   chatWindow.appendChild(messageDiv);
                   chatWindow.scrollTop = chatWindow.scrollHeight;
+
+                  if (shouldSave) {
+                    saveConversation();
+                  }
                 }
-              
+
                 function addTypingIndicator() {
                   const typingDiv = document.createElement('div');
                   typingDiv.className = 'bot-message typing-indicator';
@@ -1882,63 +2028,61 @@
                   chatWindow.appendChild(typingDiv);
                   chatWindow.scrollTop = chatWindow.scrollHeight;
                 }
-              
+
                 function removeTypingIndicator() {
                   const typingIndicator = document.querySelector('.typing-indicator');
                   if (typingIndicator) {
                     typingIndicator.remove();
                   }
                 }
-              
+
                 async function handleUserInput() {
                   const userMessage = inputField.value.trim();
                   if (userMessage) {
                     console.log(userMessage);
                     addMessage(userMessage, true);
                     inputField.value = '';
-              
-                    // Add typing indicator
+
                     addTypingIndicator();
-              
+
                     try {
-                      // const response = await fetch(`http://localhost:8034/infer`, {
                       const response = await fetch(`/infer`, {
-                    
                         method: 'POST',
                         headers: {
                           'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ input: userMessage ,ID: userID}),
+                        body: JSON.stringify({ input: userMessage, ID: userID }),
                       });
-              
+
                       if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                       }
-              
+
                       const data = await response.json();
-              
-                      // Remove typing indicator before adding the bot's response
+
                       removeTypingIndicator();
                       addMessage(data.response);
                     } catch (error) {
                       console.error('Error:', error);
-              
-                      // Remove typing indicator before adding the error message
+
                       removeTypingIndicator();
                       addMessage('Sorry, there was an error processing your message.');
                     }
                   }
                 }
-              
+
                 sendButton.addEventListener('click', handleUserInput);
-              
+
                 inputField.addEventListener('keypress', function (e) {
                   if (e.key === 'Enter') {
                     handleUserInput();
                   }
                 });
+                loadConversation();
+                addDateTimeIndicator();
+
               });
-              
+
               const tracker = document.querySelector('.tracker');
               const progressBar = document.querySelector('.progress-bar');
               const timePeriod = document.querySelector('.time-period');
