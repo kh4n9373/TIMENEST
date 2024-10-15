@@ -1,8 +1,11 @@
+
+paste .env file in outermost (contact developers)
+
 ### Option 1: Fast, 1 line
 ```
 docker-compose up --build
 ```
-
+check `http://127.0.0.1:5001`
 ### Option 2: Environment set up and run 
 
 use python VM 
@@ -19,11 +22,8 @@ conda activate timenest
 pip install -r requirements.txt
 ```
 
-
-paste .env file in outermost (contact developers)
-
 run the app 
 ```
 python src/app.py
 ```
-check `localhost:5001`
+check `http://127.0.0.1:5001`
