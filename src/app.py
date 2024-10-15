@@ -149,13 +149,29 @@ def authenticate():
             record = mongo_client.find_one('users',{'UserName': user_name})
             trigger_metadata(record['userID'])
             userID = record['userID']
-            send_messange("Thank you for using Timenest","Enjoy your calendar UwU",user_email)
+            tieu_de = "Thank you for using Timenest"
+            content = """
+Welcome to Timenest, your smart task manager. Enjoy your productive day with us.
+If you want to receive notification or news about Timenest, please turn on the notification in the setting.
+
+Best regards,
+CLUTCH's Back Office Team.
+            """
+            send_messange(tieu_de,content,user_email)
 
             return jsonify({"status":"success","message": "User authenticated","userID":userID,"name":user_name}), 200
         else:
             mongo_client.insert_one('users', {"userID": user_id,"UserName": user_name, "Password": 'GG'})
             trigger_metadata(user_id)
-            send_messange("Thank you for using Timenest","Enjoy your calendar UwU",user_email)
+            tieu_de = "Thank you for using Timenest"
+            content = """
+Welcome to Timenest, your smart task manager. Enjoy your productive day with us.
+If you want to receive notification or news about Timenest, please turn on the notification in the setting.
+
+Best regards,
+CLUTCH's Back Office Team.
+            """
+            send_messange(tieu_de,content,user_email)
             return jsonify({
                 "status": "success", 
                 "message": "User authenticated",
