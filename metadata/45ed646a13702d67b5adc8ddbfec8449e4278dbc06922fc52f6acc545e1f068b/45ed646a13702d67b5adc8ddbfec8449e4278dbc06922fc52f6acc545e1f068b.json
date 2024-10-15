@@ -1,0 +1,23 @@
+{
+    "username": "tuananh123",
+    "tasks": [
+        {
+            "userID": "45ed646a13702d67b5adc8ddbfec8449e4278dbc06922fc52f6acc545e1f068b",
+            "taskName": "ahihi",
+            "taskDescription": "do ngok",
+            "startTime": "2024-10-10T19:00:00.000Z",
+            "endTime": "2024-10-10T21:30:00.000Z",
+            "taskcolor": "#ff0000"
+        },
+        {
+            "userID": "45ed646a13702d67b5adc8ddbfec8449e4278dbc06922fc52f6acc545e1f068b",
+            "taskName": "Gym",
+            "taskDescription": "Awake your beast",
+            "startTime": "2024-10-13T19:15:00.000Z",
+            "endTime": "2024-10-13T21:00:00.000Z",
+            "taskcolor": "#3a88fe"
+        }
+    ],
+    "group": [],
+    "project": []
+}

@@ -1,6 +1,6 @@
 from database.mongodb import MongoManager
 from flask import Flask, request, jsonify, render_template,session,abort, redirect
-from utils import trigger_metadata, generate_uid
+from utils import trigger_metadata, generate_uid, send_messange
 from object.calendar import *
 from chatbot import *
 from google.oauth2 import id_token
@@ -149,16 +149,20 @@ def authenticate():
             record = mongo_client.find_one('users',{'UserName': user_name})
             trigger_metadata(record['userID'])
             userID = record['userID']
+            send_messange("Thank you for using Timenest","Enjoy your calendar UwU",user_email)
+
             return jsonify({"status":"success","message": "User authenticated","userID":userID,"name":user_name}), 200
         else:
             mongo_client.insert_one('users', {"userID": user_id,"UserName": user_name, "Password": 'GG'})
             trigger_metadata(user_id)
+            send_messange("Thank you for using Timenest","Enjoy your calendar UwU",user_email)
             return jsonify({
                 "status": "success", 
                 "message": "User authenticated",
                 "user_id": user_id,
                 "name": user_name
             }), 200
+    
             
     except ValueError:
         return jsonify({"status": "error", "message": "Invalid token"}), 400

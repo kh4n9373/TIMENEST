@@ -1,6 +1,7 @@
 import json 
 import hashlib
 import os
+import smtplib
 from database.mongodb import MongoManager, MongoJSONEncoder
 
 mongo_client = MongoManager('Timenest')
@@ -40,3 +41,19 @@ def generate_uid(input_data: str) -> str:
 
 def convert_to_js(response):
     return response.replace('\n','<br>').replace('###','-').replace('**','')
+
+def send_messange(subject, message,user_email):
+    email = "timenest.notif@gmail.com"
+    receiver = user_email
+    
+    text = f"Subject: {subject}\n\n{message}"
+    
+    server = smtplib.SMTP("smtp.gmail.com",587)
+    server.starttls()
+    server.login(email, "xnlgyvyzzgyclnkh")
+    server.sendmail(email,receiver,text)
+    print("Email have sent to " + receiver)
+
+# send_messange("Thank for using Timenest.",'Test','phmtrntuankhang@gmail.com')
+# send_messange("Quen mat khau a thang ngu",'This is your OTP for recovery, dont share for any body : 142365','phmtrntuankhang@gmail.com')
+    
