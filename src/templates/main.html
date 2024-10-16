@@ -1872,84 +1872,6 @@
                 // Set the text content to today's date
                 dayElement.textContent = formatDate(currentDate);
               });
-              
-              // document.addEventListener('DOMContentLoaded', function () {
-              //   const chatWindow = document.querySelector('.chat-window');
-              //   const inputField = document.querySelector('.input-area input');
-              //   const sendButton = document.querySelector('.input-area button');
-
-              //   function addMessage(message, isUser = false) {
-              //     const messageDiv = document.createElement('div');
-              //     messageDiv.className = isUser ? 'user-message' : 'bot-message';
-              //     messageDiv.innerHTML = `<p>${message}</p>`;
-              //     chatWindow.appendChild(messageDiv);
-              //     chatWindow.scrollTop = chatWindow.scrollHeight;
-              //   }
-              
-              //   function addTypingIndicator() {
-              //     const typingDiv = document.createElement('div');
-              //     typingDiv.className = 'bot-message typing-indicator';
-              //     typingDiv.innerHTML =
-              //       '<div class="typing-bubble"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
-              //     chatWindow.appendChild(typingDiv);
-              //     chatWindow.scrollTop = chatWindow.scrollHeight;
-              //   }
-              
-              //   function removeTypingIndicator() {
-              //     const typingIndicator = document.querySelector('.typing-indicator');
-              //     if (typingIndicator) {
-              //       typingIndicator.remove();
-              //     }
-              //   }
-              
-              //   async function handleUserInput() {
-              //     const userMessage = inputField.value.trim();
-              //     if (userMessage) {
-              //       console.log(userMessage);
-              //       addMessage(userMessage, true);
-              //       inputField.value = '';
-              
-              //       // Add typing indicator
-              //       addTypingIndicator();
-              
-              //       try {
-              //         // const response = await fetch(`http://localhost:8034/infer`, {
-              //         const response = await fetch(`/infer`, {
-                    
-              //           method: 'POST',
-              //           headers: {
-              //             'Content-Type': 'application/json',
-              //           },
-              //           body: JSON.stringify({ input: userMessage ,ID: userID}),
-              //         });
-              
-              //         if (!response.ok) {
-              //           throw new Error(`HTTP error! status: ${response.status}`);
-              //         }
-              
-              //         const data = await response.json();
-              
-              //         // Remove typing indicator before adding the bot's response
-              //         removeTypingIndicator();
-              //         addMessage(data.response);
-              //       } catch (error) {
-              //         console.error('Error:', error);
-              
-              //         // Remove typing indicator before adding the error message
-              //         removeTypingIndicator();
-              //         addMessage('Sorry, there was an error processing your message.');
-              //       }
-              //     }
-              //   }
-              
-              //   sendButton.addEventListener('click', handleUserInput);
-              
-              //   inputField.addEventListener('keypress', function (e) {
-              //     if (e.key === 'Enter') {
-              //       handleUserInput();
-              //     }
-              //   });
-              // });
               function addDateTimeIndicator() {
                   const dateTimeDiv = document.createElement('div');
                   dateTimeDiv.className = 'timestamp';
@@ -1974,8 +1896,7 @@
                 const inputField = document.querySelector('.input-area input');
                 const sendButton = document.querySelector('.input-area button');
 
-                // Function to save conversation to local storage
-                function saveConversation() {
+                function saveConversation(user_id) {
                   const messages = Array.from(chatWindow.children).map(child => {
                     if (child.classList.contains('timestamp')) {
                       return { type: 'timestamp', text: child.textContent };
@@ -1987,14 +1908,19 @@
                       };
                     }
                   });
-                  localStorage.setItem('chatConversation', JSON.stringify(messages));
+                  const conversationData = {
+                    user_id: user_id,
+                    messages: messages  // Fixed typo: 'messange' to 'messages'
+                  }
+                  localStorage.setItem(`chatConversation_${user_id}`, JSON.stringify(conversationData));
                 }
 
-                // Function to load conversation from local storage
-                function loadConversation() {
-                  const savedConversation = localStorage.getItem('chatConversation');
+
+                function loadConversation(user_id) {
+                  const savedConversation = localStorage.getItem(`chatConversation_${user_id}`);
                   if (savedConversation) {
-                    const messages = JSON.parse(savedConversation);
+                    const conversationData = JSON.parse(savedConversation);
+                    const messages = conversationData.messages;
                     chatWindow.innerHTML = ''; // Clear existing messages
                     messages.forEach(item => {
                       if (item.type === 'timestamp') {
@@ -2015,8 +1941,8 @@
                   chatWindow.appendChild(messageDiv);
                   chatWindow.scrollTop = chatWindow.scrollHeight;
 
-                  if (shouldSave) {
-                    saveConversation();
+                  if (shouldSave && typeof userID !== 'undefined') {
+                    saveConversation(userID);
                   }
                 }
 
@@ -2078,7 +2004,7 @@
                     handleUserInput();
                   }
                 });
-                loadConversation();
+                loadConversation(userID);
                 addDateTimeIndicator();
 
               });
