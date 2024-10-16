@@ -45,6 +45,7 @@ class Prompt(BaseModel):
 client = OpenAI(api_key=TOGETHER_API_KEY, base_url='https://api.together.xyz/v1')
 
 DEFAULT_MODEL = "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo"
+# DEFAULT_MODEL = "mistralai/Mixtral-8x22B-Instruct-v0.1"
 # DEFAULT_MODEL = "Qwen/Qwen2.5-72B-Instruct-Turbo"
 
 
@@ -109,7 +110,8 @@ def saving_constraint(query, file_path=f'constraint/{userID}/datalake.json'):
     
 
 def reading_constraint(query):
-    documents_path = "constraint"
+    global userID
+    documents_path = f"constraint/{userID}/"
     try:
         vectorstore = create_rag_system(documents_path)
         response = query_rag_system(vectorstore, query, model=DEFAULT_MODEL)
@@ -245,7 +247,6 @@ def query_rag_system(vectorstore, query, model=DEFAULT_MODEL):
          "content": f"""
             ### INSTRUCTION ###
             Your name is "TimeNest," and you are a virtual assistant specializing in schedule management.
-            First message, alway introduce yourself if user say hi or hello to you. 
             Below are the main characteristics of TimeNest:
 
             You will assist users in answering questions related to scheduling, time management, and advising on effective task organization.
@@ -380,7 +381,6 @@ def chatbot_response(user_input,ID):
             Today is : {current_date()}.
             If user ask you about datetime of some event. Take your current date to induce. Let us think step by step.
             Your name is "TimeNest," and you are a virtual assistant specializing in schedule management.
-            First message, alway introduce yourself if user say hi or hello to you. 
 
             Below are the main characteristics of TimeNest:
 
