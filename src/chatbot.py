@@ -8,12 +8,9 @@ from langchain.schema import Document
 from langchain.embeddings.base import Embeddings
 from database.mongodb import MongoManager, MongoJSONEncoder
 from datetime import datetime
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from langchain.memory import ConversationBufferMemory
 from langchain.schema import HumanMessage
-import uvicorn
 from utils import convert_to_js,trigger_metadata
 import re
 from config.config_env import TOGETHER_API_KEY
@@ -21,16 +18,6 @@ from config.config_env import TOGETHER_API_KEY
 
 mongo_client = MongoManager("Timenest")
 
-app = FastAPI()
-
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"]
-)
 
 memory = ConversationBufferMemory(
     return_messages=True,
@@ -68,8 +55,7 @@ def current_date():
 
 
 def load_documents_from_json(file_path):
-    # print('herreeee')
-    # print(file_path)
+
     with open(file_path, 'r') as file:
         data = json.load(file)
     
@@ -86,6 +72,9 @@ def load_documents_from_json(file_path):
     
 
 def saving_constraint(query, file_path=f'constraint/{userID}/datalake.json'):
+    global userID
+    file_path = f'constraint/{userID}/datalake.json'
+    print(file_path)
     timestamp = datetime.now().isoformat()
     new_entry = {timestamp: query}
 
@@ -148,10 +137,6 @@ def database_asking(query):
     
     
 def load_documents_from_local(path):
-    """
-    Load documents from a local path.
-    Supports PDF and text files.3
-    """
     docs = []
     for filename in os.listdir(path):
         file_path = os.path.join(path, filename)
@@ -197,17 +182,13 @@ class TogetherEmbeddings(Embeddings):
         return response.data[0].embedding
 
 def create_faiss_index(documents):
-    """
-    Create a FAISS index for efficient similarity search.
-    """
+
     embeddings = TogetherEmbeddings() 
     vectorstore = FAISS.from_documents(documents, embeddings)
     return vectorstore
 
 def infer_chat(chat, model=DEFAULT_MODEL):
-    """
-    Function to send a chat message to the Together API and get a response.
-    """
+
     chat_response = client.chat.completions.create(
         model=model,
         messages=chat,
@@ -217,88 +198,30 @@ def infer_chat(chat, model=DEFAULT_MODEL):
     return chat_response.choices[0].message.content
 
 def create_rag_system(documents_path):
-    """
-    Create the RAG system by loading documents and building a FAISS index.
-    """
+
     documents_path = Path(documents_path).resolve()
     
     documents = load_documents_from_local(documents_path)
     print(documents)
     if not documents:
         raise ValueError("No documents found in the specified path.")
-    # print('vec')
     vectorstore = create_faiss_index(documents)
-    # print(vectorstore)
     return vectorstore
 
 def query_rag_system(vectorstore, query, model=DEFAULT_MODEL):
     """
     Query the RAG system with a given question and generate an answer using the Together API.
     """
-    print('aaaaaa')
+
     retriever = vectorstore.as_retriever()
     related_docs = retriever.invoke(query)
 
     context = "\n\n".join([doc.page_content for doc in related_docs])
-    print("contextttttt:",context)
-    # print(context)
-    content = [
-        {"role": "system", 
-         "content": f"""
-            ### INSTRUCTION ###
-            Your name is "TimeNest," and you are a virtual assistant specializing in schedule management.
-            Below are the main characteristics of TimeNest:
-
-            You will assist users in answering questions related to scheduling, time management, and advising on effective task organization.
-            You will communicate with users in a professional, friendly, and respectful manner. Aim to be the most reliable virtual assistant for schedule management!
-            TimeNest will refer to itself as "I" and address the user as "you."
-            You - TimeNest, also enjoy analyzing behavior and process efficiency; provide statistics and analysis where appropriate.
-            Answers should be formatted in Markdown, with **important** words highlighted.
-            Provide accurate and sufficient answers, avoiding overly long or too brief responses.
-            You will help users by guiding them to ask questions, answering inquiries, and providing accurate information about schedule management from the provided database's document you connected to.
-            Avoid sensitive or unrelated questions. Do not answer questions related to politics or religion.
-            Below are the 6 main tasks you will perform:
-            - Answer questions about events in the schedule.
-            - Suggest ways to accomplish tasks in the schedule effectively.
-            - Provide advice on time management.
-            - Assist in adding, modifying, or deleting events in the schedule.
-            - Help break down tasks in the schedule into smaller tasks and arrange a timeline for execution.
-
-            ### SPECIAL CASE ###
-            When chatting with user, you will be likely to be in circumstance that you need to call function, there are 4 circumstance:
-            - When user request advice, tip and tricks for better scheduling and time management or explaining why they failed finishing previous tasks (DOMAIN ASKING): You are provided with the documents with time management skills, you can infer it when instructing user how to manage time effectively.
-            - When user ask information about him/her-self, him/her-username or their calendar (relate to their history,NOT THE FUTURE) (DATABASE ASKING): You are also embedded with user's database, call the function to read the database (json file) and response relevant information from the json file. When you get information of tasks, just tell them about task name, task description, start Time and endTime, and dedscript those information in natural language way.
-            - When user tell you the bad condition that he/she will not have time (or not available at that time (SAVE CONSTRAINT): you are able to identify the message from user which make their schedule being limited, then you call saving constraint function to note that time-constraint event. So that,in the future suggestion for task management, you can look at constraint you noted and avoid that for future schedule suggest consideration.  
-            - When user ask you to suggest planning their tasks or rescheduling effetcively (READ CONSTRAINT): You are connected to the constraint hub you saved before, when user ask for task scheduling or anything about scheduling, you need to load the constraint, then consider the constraints from this constraint-hub for better scheduling. You are not allow to schedule for user the event conflict with the constraints. 
-            If you don't recognize any alignment with your special case, like some normal gosip chatting like 'hi','hello there', 'i am tired',... just behave as normal sentiment chatbot and take the gosip with user.
-
-            ### Guidelines for Every Turn ###
-
-            **Important Instructions**
-
-            Always request more information: Ask questions to gather more information before providing a final answer.
-            Tone: Friendly, cheerful.
-            Answer Style: Accurate, sufficient, in markdown format, with important keywords highlighted.
-            Limitations: Do not discuss sensitive or unrelated topics. Redirect unrelated questions back to the 6 main tasks.
-            
-            
-          
-         """},
-        {"role": "user", "content": f"Context: {context}\n\nQuestion: {query}"}
-    ]
-
-    response = infer_chat(content, model=model)
-    
-    # sources = [doc.metadata['source'] for doc in related_docs]
-    return response
-    # , sources
+  
+    return context
 
 
-# def trigger_metadata(userID):
-#     metadata = mongo_client.find_info(userID)
-#     with open(f"metadata/{userID}.json", 'w') as f:
-#         json.dump(metadata, f, indent=4, ensure_ascii=False, cls=MongoJSONEncoder)
-#     return f"Triggered metadata for {userID}"
+
 
 tools = [
     {
@@ -400,27 +323,28 @@ def chatbot_response(user_input,ID):
             - Assist in adding, modifying, or deleting events in the schedule.
             - Help break down tasks in the schedule into smaller tasks and arrange a timeline for execution.
             
-            ### SPECIAL CASE ###
+            ### FUNCTION CALLING INSTRUCTION ###
             When chatting with user, you will be likely to be in circumstance that you need to call function, there are 4 circumstance:
             - When user request advice, tip and tricks for better scheduling and time management or explaining why they failed finishing previous tasks (DOMAIN ASKING): You are provided with the documents with time management skills, you can infer it when instructing user how to manage time effectively.
             - When user ask information about him/her-self, him/her-username or their calendar (relate to their history,NOT THE FUTURE) (DATABASE ASKING): You are also embedded with user's database, call the function to read the database (json file) and response relevant information from the json file. When you get information of tasks, just tell them about task name, task description, start Time and endTime, and dedscript those information in natural language way.
             - When user tell you the bad condition that he/she will not have time (or not available at that time (SAVE CONSTRAINT): you are able to identify the message from user which make their schedule being limited, then you call saving constraint function to note that time-constraint event. So that,in the future suggestion for task management, you can look at constraint you noted and avoid that for future schedule suggest consideration.  
             - When user ask you to suggest planning their tasks or rescheduling effetcively (READ CONSTRAINT): You are connected to the constraint hub you saved before, when user ask for task scheduling or anything about scheduling, you need to load the constraint, then consider the constraints from this constraint-hub for better scheduling. You are not allow to schedule for user the event conflict with the constraints. 
-            If you don't recognize any alignment with your special case, like some normal gosip chatting like 'hi','hello there', 'i am tired',... just behave as normal sentiment chatbot and take the gosip with user.
+            If function calling return None, you have to response that question using your knowledge and try to think step by step to infer the answer. 
             
+            ### IMPORTANT ###
+            Never return None response.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
         """},
         {"role": "user", "content": user_input}
     ]
 
-    # Get conversation history from Langchain memory
     history = memory.load_memory_variables({})['history']
     print(history)
 
     for message in history[-10:]:  # Include the last 10 messages
-        # if isinstance(message, HumanMessage):
-        messages.append({"role": "user", "content": message.content})
-        # else:
-        #     messages.append({"role": "assistant", "content": message.content})
+        if isinstance(message, HumanMessage):
+            messages.append({"role": "user", "content": message.content})
+        else:
+            messages.append({"role": "assistant", "content": message.content})
 
     messages.append({"role": "user", "content": user_input})
 
@@ -430,48 +354,39 @@ def chatbot_response(user_input,ID):
         tools=tools,
         tool_choice="auto",
     )
-    # print(response)
-    # response_content = response.choices[0].message.content
-    # print(response_content)
-    
-    print('='*10)
-    print(response)
-    print('='*10)
+
+
     tool_calls = response.choices[0].message.tool_calls
     response_message = response.choices[0].message.content
     
     if response_message and "<function=" in response_message:
-        # Extract function name and arguments
+        print(response_message)
         if re.search(r'<function=(\w+)>({.*?})<function>', response_message):
             function_match = re.search(r'<function=(\w+)>({.*?})<function>', response_message)
         else:
             function_match = re.search(r'<function=(\w+)>(.*?)</function>', response_message)
         
-        print(function_match)
         if function_match:
-            print(111111)
+            print(function_match)
             function_name = function_match.group(1)
             function_args = json.loads(function_match.group(2))
-            print(function_name)
-            print(function_args)
-            # Execute the function  
+
             if function_name == "domain_asking":
+                print('DOMAIN ASKING')
                 function_response = domain_asking(query=function_args.get("query"))
-                print(1)
+                
             elif function_name == "database_asking":
-                print(function_args.get("query"))
+                print('DATABASE_ASKING')
                 function_response = database_asking(query=function_args.get("query"))
-                print(2)
-                print(function_response)
-                print(2)
+
             elif function_name == "reading_constraint":
+                print('READING_CONSTRAINT')
                 function_response = reading_constraint(query=function_args.get("asking"))
-                print(3)
+
             elif function_name == "saving_constraint":
-                print(4)
+                print('SAVING_CONSTRAINT')
                 function_response = saving_constraint(query=function_args.get("noting"))
 
-            # Append the function response to the messages
             messages.append(
                 {
                     "role": "function",
@@ -480,7 +395,6 @@ def chatbot_response(user_input,ID):
                 }
             )
 
-            # Generate a new response incorporating the function result
             function_enriched_response = client.chat.completions.create(
                 model=DEFAULT_MODEL,
                 messages=messages,
@@ -488,8 +402,14 @@ def chatbot_response(user_input,ID):
 
             response_content = function_enriched_response.choices[0].message.content
             memory.chat_memory.add_user_message(user_input)
-            # memory.chat_memory.add_ai_message(response_content)
+            memory.chat_memory.add_ai_message(response_content)
             return response_content
+        else:
+            response_content = response.choices[0].message.content
+            memory.chat_memory.add_user_message(user_input)
+            memory.chat_memory.add_ai_message(response_content)
+            return response_content
+    
 
     elif tool_calls:
         for tool_call in tool_calls:
@@ -498,15 +418,11 @@ def chatbot_response(user_input,ID):
 
             if function_name == "domain_asking":
                 function_response = domain_asking(query=function_args.get("query"))
-                print(1)
             elif function_name == "database_asking":
                 function_response = database_asking(query=function_args.get("query"))
-                print(2)
             elif function_name == "reading_constraint":
                 function_response = reading_constraint(query=function_args.get("asking"))
-                print(3)
             elif function_name == "saving_constraint":
-                print(4)
                 function_response = saving_constraint(query=function_args.get("noting"))
 
             messages.append(
@@ -525,59 +441,18 @@ def chatbot_response(user_input,ID):
 
         response_content = function_enriched_response.choices[0].message.content
         memory.chat_memory.add_user_message(user_input)
-        # memory.chat_memory.add_ai_message(response_content)
+        memory.chat_memory.add_ai_message(response_content)
         return response_content
 
     else:
 
         response_content = response.choices[0].message.content
         memory.chat_memory.add_user_message(user_input)
-        # memory.chat_memory.add_ai_message(response_content)
+        memory.chat_memory.add_ai_message(response_content)
         return response_content
-
-
-    # Add the user message and AI response to Langchain memory
-    # memory.chat_memory.add_user_message(user_input)
-    # memory.chat_memory.add_ai_message(response_content)
-
-    # return response_content
-    
-    
     
 def chat(prompt):
     if prompt.lower() in ['exit', 'quit', 'bye']:
         return  "Goodbye!"
     response = chatbot_response(prompt)
     return response
-    
-@app.get("/")
-def check_health():
-    return {'message': 'healthy'}
-
-@app.post("/infer")
-def get_inference(prompt: Prompt):
-    global userID
-    # print(prompt.input)
-    userID = prompt.userID
-    response = chatbot_response(prompt.input)
-    print(response)
-    return {"response": convert_to_js(response)}
-
-# memory = ConversationBufferMemory(return_messages=True)
-# @app.post("/infer")
-
-# def get_inference(prompt: Prompt):
-    
-#     memory.chat_memory.add_user_message(prompt.input)
-    
-#     response = chatbot_response(prompt.input)
-    
-#     memory.chat_memory.add_ai_message(response)
-    
-    
-#     return {
-#         "response": convert_to_js(response)
-#     }
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8034)

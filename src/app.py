@@ -1,6 +1,6 @@
 from database.mongodb import MongoManager
 from flask import Flask, request, jsonify, render_template,session,abort, redirect
-from utils import trigger_metadata, generate_uid, send_messange
+from utils import trigger_metadata, generate_uid, send_messange,convert_to_js
 from object.calendar import *
 from chatbot import *
 from google.oauth2 import id_token

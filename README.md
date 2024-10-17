@@ -27,3 +27,10 @@ run the app
 python src/app.py
 ```
 check `http://127.0.0.1:5001`
+
+
+### Extra 
+```
+curl -L https://fly.io/install.sh | sh
+export PATH=$HOME/.fly/bin:$PATH
+```
