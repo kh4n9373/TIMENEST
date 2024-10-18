@@ -13,9 +13,9 @@ from langchain.memory import ConversationBufferMemory
 from langchain.schema import HumanMessage
 from utils import convert_to_js,trigger_metadata
 import re
+import requests
+from bson import ObjectId
 from config.config_env import TOGETHER_API_KEY
-
-
 mongo_client = MongoManager("Timenest")
 
 
@@ -26,7 +26,12 @@ memory = ConversationBufferMemory(
 
 userID = ""
 
-
+class JSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, ObjectId):
+            return str(o)
+        return json.JSONEncoder.default(self, o)
+    
 class Prompt(BaseModel):
     input: str
 client = OpenAI(api_key=TOGETHER_API_KEY, base_url='https://api.together.xyz/v1')
@@ -70,7 +75,9 @@ def load_documents_from_json(file_path):
     
     return [Document(page_content=content, metadata=metadata)]
     
+### FUNCTION CALLING 
 
+### SAVE CONSTRAINT
 def saving_constraint(query, file_path=f'constraint/{userID}/datalake.json'):
     global userID
     file_path = f'constraint/{userID}/datalake.json'
@@ -97,7 +104,7 @@ def saving_constraint(query, file_path=f'constraint/{userID}/datalake.json'):
     print(f"Info saved to {file_path}")
     return json.dumps({"message":"user will not available at that time"})
     
-
+# LOAD CONSTRAINT
 def reading_constraint(query):
     global userID
     documents_path = f"constraint/{userID}/"
@@ -108,7 +115,7 @@ def reading_constraint(query):
     except Exception as e:
         return json.dumps({"error": str(e)})
     
-
+# DOMAIN 
 def domain_asking(query):
     documents_path = "documents"
     try:
@@ -118,6 +125,7 @@ def domain_asking(query):
     except Exception as e:
         return json.dumps({"error": str(e)})
 
+# DATABASE QUERY
 def database_asking(query):
     global userID
     documents_path = f"metadata/{userID}/"
@@ -134,7 +142,33 @@ def database_asking(query):
         return json.dumps({"response": response})
     except Exception as e:
         return json.dumps({"error": str(e)})
+
+# DATABASE ADD TASK 
+def database_addtask(userID,taskName="None",taskDescript="None",startTime="None",endTime="None",taskColor="#000000"):
+    url = 'http://127.0.0.1:5001/send_add_data'
     
+    try:
+        taskData = {
+            'userID': userID,
+            'taskName': taskName,
+            'taskDescription': taskDescript if taskDescript else "",
+            'startTime': startTime,
+            'endTime': endTime,
+            'taskcolor': taskColor if taskColor else ""
+        }
+        try:
+            response = requests.post(url,json=taskData)
+            if response.status_code == 200:
+                print(f"data task sent to frontend")
+            else:
+                print(f'Failed to send data to frontend')
+        except Exception as e:
+            print(f"Error sending message: {e}")
+        mongo_client.insert_one('tasks', taskData)
+        trigger_metadata(userID)
+        return {'message': 'add task successfully'}
+    except Exception as e:
+        return {'message':f"Error {e} happened, can not add task"}
     
 def load_documents_from_local(path):
     docs = []
@@ -291,6 +325,39 @@ tools = [
                 "required": ["asking"]
             }
         }
+    },
+    {
+        "type":"function",
+        "function": {
+            "name": "database_addtask",
+            "description": "Pass by parameters equivalent with information user gave you to ask their task",
+            "parameters": {
+                "type":"object",
+                "properties": {
+                    "taskName":{
+                        "type":"string",
+                        "description":"Name of the task"
+                    },
+                    "taskDescript": {
+                        "type":"string",
+                        "description":"Details description of the task."
+                    },
+                    "startTime":{
+                        "type":"string",
+                        "description":"Start time of the task, formatted in ISO 8601 : %Y-%m-%dT%H:%M:%S.%fZ"
+                    },
+                    "endTime":{
+                        "type":"string",
+                        "description":"End time of the task, formatted in ISO 8601 : %Y-%m-%dT%H:%M:%S.%fZ"
+                    },
+                    "taskColor":{
+                        "type":"string",
+                        "description":"color when display the task"
+                    }    
+                },
+                "required":["taskName","startTime","endTime"]
+            }
+        }
     }
 ]
 
@@ -329,6 +396,7 @@ def chatbot_response(user_input,ID):
             - When user ask information about him/her-self, him/her-username or their calendar (relate to their history,NOT THE FUTURE) (DATABASE ASKING): You are also embedded with user's database, call the function to read the database (json file) and response relevant information from the json file. When you get information of tasks, just tell them about task name, task description, start Time and endTime, and dedscript those information in natural language way.
             - When user tell you the bad condition that he/she will not have time (or not available at that time (SAVE CONSTRAINT): you are able to identify the message from user which make their schedule being limited, then you call saving constraint function to note that time-constraint event. So that,in the future suggestion for task management, you can look at constraint you noted and avoid that for future schedule suggest consideration.  
             - When user ask you to suggest planning their tasks or rescheduling effetcively (READ CONSTRAINT): You are connected to the constraint hub you saved before, when user ask for task scheduling or anything about scheduling, you need to load the constraint, then consider the constraints from this constraint-hub for better scheduling. You are not allow to schedule for user the event conflict with the constraints. 
+            - When user ask you to add a tasks, if they didn't your provide you these information, ask them: taskName (required), startTime (required), endTime (required), taskDescript (optional), taskColor (optional). startTime/endTime user provided to you can be natural language form please convert them to ISO 8601 : %Y-%m-%dT%H:%M:%S.%fZ" before passing into the database_addtask function. 
             If function calling return None, you have to response that question using your knowledge and try to think step by step to infer the answer. 
             
             ### IMPORTANT ###
@@ -386,6 +454,10 @@ def chatbot_response(user_input,ID):
             elif function_name == "saving_constraint":
                 print('SAVING_CONSTRAINT')
                 function_response = saving_constraint(query=function_args.get("noting"))
+            elif function_name == "database_addtask":
+                print("DB ADD TASK")
+                function_response = database_addtask(userID=ID,taskName=function_args.get("taskName"),taskDescript=function_args.get("taskDescript"),startTime=function_args.get("startTime"),endTime=function_args.get("endTime"),taskColor=function_args.get("taskColor"))
+                
 
             messages.append(
                 {
@@ -424,7 +496,9 @@ def chatbot_response(user_input,ID):
                 function_response = reading_constraint(query=function_args.get("asking"))
             elif function_name == "saving_constraint":
                 function_response = saving_constraint(query=function_args.get("noting"))
-
+            elif function_name == "database_addtask":
+                function_response = database_addtask(userID=ID,taskName=function_args.get("taskName"),taskDescript=function_args.get("taskDescript"),startTime=function_args.get("startTime"),endTime=function_args.get("endTime"),taskColor=function_args.get("taskColor"))
+                
             messages.append(
                 {
                     "tool_call_id": tool_call.id,
@@ -456,3 +530,7 @@ def chat(prompt):
         return  "Goodbye!"
     response = chatbot_response(prompt)
     return response
+
+if __name__ == "__main__":
+    asking = "add the new tasks for me: hang out, from 2h to 4h today"
+    print(chatbot_response(asking,"109356546733291536481"))

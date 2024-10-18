@@ -2,3 +2,4 @@
 **/venv
 **/src/client_secret.json
 fly.toml
+test

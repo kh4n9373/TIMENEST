@@ -10,10 +10,16 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
             integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
             crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <!-- <link rel="stylesheet" href="/static/styles/style_main.css" /> -->
+        <!-- <link rel="stylesheet" href="/static/styles/style_main.css" /> -->        
         <script src="script_main.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+
         <script>
             const userID = "{{userID}}"; // This assumes the userID is passed from the Python script
+            const username = "{{username}}";
+            // const evtSource = new EventSource("/stream");
+
+
         </script>
         <title>Timenest</title>
     </head>
@@ -1229,6 +1235,7 @@
                 }
 
                 function addTaskToCalendarFromDB(taskData) {
+                    console.log('task loaded from db ',taskData);
                     const task = document.createElement('div');
                     task.classList.add('task');
 
@@ -1312,7 +1319,8 @@
                 const chatbox = document.querySelector('.chatbox');
                 const userInput = document.getElementById('userInput');
                 const sendButton = document.getElementById('sendButton');
-            
+
+
                 function sendMessage() {
                   const message = userInput.value.trim();
                   if (message !== '') {
@@ -1351,6 +1359,7 @@
                   }
                 });
               });
+
               
               // Modal functionality
               const modal = document.getElementById('createTaskModal');
@@ -1736,6 +1745,7 @@
                         // Handle errors here
                     });
                 }
+
                 function addTaskToCalendar() {
                   const task = document.createElement('div');
                   task.classList.add('task');
@@ -2053,6 +2063,129 @@
                   updateProgressInfo();
                 }
               }, 2000); // Switch between week and month data every 2 seconds while hovering
-        // </script>
+        </script>
+        <script>
+          function deleteTask(taskData) {
+                  console.log(1234)
+                  // fetch('http://localhost:5004/delete-task', {
+                  fetch('/delete-task', {
+        
+                      method: 'DELETE',
+                      headers: {
+                          'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify(taskData)
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                      console.log('Success:', data);
+                      // Optionally, update the calendar here or show a success message
+                      getUserTasks(); // Refresh the tasks after adding a new one
+                  })
+                  .catch((error) => {
+                      console.error('Error:', error);
+                      // Handle errors here
+                  });
+              }
+          function addTaskToCalendarFromDB(taskData) {
+              console.log('task data passed ',taskData);
+              const task = document.createElement('div');
+              task.classList.add('task');
+
+              // Task Name
+              const taskName = document.createElement('p');
+              taskName.classList.add('taskName');
+              taskName.textContent = taskData.taskName;
+
+              // Task Description
+              const taskDescript = document.createElement('p');
+              taskDescript.classList.add('taskDescript');
+              taskDescript.textContent = taskData.taskDescription;
+
+              // Parse start and end times
+              const startTime = new Date(taskData.startTime.replace('Z', ''));
+              const endTime = new Date(taskData.endTime.replace('Z', ''));
+              console.log('parsed start time',startTime)
+              console.log('parsed end time',endTime)
+
+              // Task Time
+              const taskTime = document.createElement('p');
+              taskTime.classList.add('taskTime');
+              taskTime.textContent = `${startTime.toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  // hour12: false,
+                  // timeZone: 'UTC'
+              })} - ${endTime.toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  // hour12: false,
+                  // timeZone: 'UTC'
+              })}`;
+
+
+              // Create Delete Button
+              const deleteButton = document.createElement('button');
+              deleteButton.textContent = 'Delete';
+              deleteButton.classList.add('delete-button');
+
+              // Add event listener to delete the task
+              deleteButton.onclick = function() {
+                  deleteTask(taskData);
+                  timeSlots.removeChild(task);
+              };
+
+              // Append elements to the task
+
+              task.appendChild(taskName);
+              task.appendChild(taskDescript);
+              task.appendChild(taskTime);
+              task.appendChild(deleteButton);
+
+              // Set task color (fallback to a default color if null)
+              task.style.backgroundColor = taskData.taskcolor || '#add8e6'; // Light blue as default
+
+              // Calculate position and size (similar to addTaskToCalendar function)
+              const today = new Date();
+              const startDayIndex = startTime.getDate() - today.getDate() + 3;
+              const startHour = startTime.getHours();
+              const startMinute = startTime.getMinutes();
+              const startSlotIndex = (startHour * 4 + startMinute / 15) * 7 + startDayIndex;
+
+              const endDayIndex = endTime.getDate() - today.getDate() + 3;
+              const endHour = endTime.getHours();
+              const endMinute = endTime.getMinutes();
+              const endSlotIndex = (endHour * 4 + endMinute / 15) * 7 + endDayIndex;
+
+              const timeSlot = document.querySelectorAll('.time-slot');
+              const startSlotElement = timeSlot[startSlotIndex + 7];
+              const endSlotElement = timeSlot[endSlotIndex + 7];
+
+              // Calculate position and size
+              const startRect = startSlotElement.getBoundingClientRect();
+              const endRect = endSlotElement.getBoundingClientRect();
+              const timeSlotRect = timeSlot[0].getBoundingClientRect();
+
+              task.style.position = 'absolute';
+              task.style.left = `${Math.min(startRect.left, endRect.left) - timeSlotRect.left}px`;
+              task.style.top = `${Math.min(startRect.top, endRect.top) - timeSlotRect.top + 10}px`;
+              task.style.width = `${Math.max(startRect.right, endRect.right) - Math.min(startRect.left, endRect.left)}px`;
+              task.style.height = `${Math.max(startRect.bottom, endRect.bottom) - Math.min(startRect.top, endRect.top) - 20}px`;
+
+              // Append the task to time slots
+              const timeSlots = document.querySelector('.time-slots'); // Make sure this selector matches your HTML structure
+              timeSlots.appendChild(task);
+          }
+          const socket = io();
+          socket.on('connect', () => {
+              console.log('Connected to server');
+          });
+          socket.on('new_data', (taskData) => {
+            console.log('WENT HEREEE')
+            console.log('taskData HEREEE',taskData);
+            addTaskToCalendarFromDB(taskData);
+          });
+          
+      </script>
     </body>
 </html>

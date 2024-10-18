@@ -1,21 +1,53 @@
 from database.mongodb import MongoManager
 from flask import Flask, request, jsonify, render_template,session,abort, redirect
+from flask_socketio import SocketIO
+# from flask_sse import sse
+# from flask_cors import CORS
 from utils import trigger_metadata, generate_uid, send_messange,convert_to_js
 from object.calendar import *
 from chatbot import *
 from google.oauth2 import id_token
-from google_auth_oauthlib.flow import Flow
-from pip._vendor import cachecontrol
-import google.auth.transport.requests
-import pathlib
 from google.auth.transport import requests
 from config.config_env import GOOGLE_CLIENT_ID
-from datetime import datetime, timedelta
+from datetime import timedelta
+from dateutil import parser
+import os
+from pydantic import BaseModel
+from langchain.memory import ConversationBufferMemory
+from utils import convert_to_js,trigger_metadata
+import re
+from config.config_env import TOGETHER_API_KEY
+from datetime import timedelta
 from dateutil import parser
 
+mongo_client = MongoManager("Timenest")
+
+
+memory = ConversationBufferMemory(
+    return_messages=True,
+    k=2
+)
+
+userID = ""
+
+
+class Prompt(BaseModel):
+    input: str
+client = OpenAI(api_key=TOGETHER_API_KEY, base_url='https://api.together.xyz/v1')
+
+DEFAULT_MODEL = "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo"
+# DEFAULT_MODEL = "mistralai/Mixtral-8x22B-Instruct-v0.1"
+# DEFAULT_MODEL = "Qwen/Qwen2.5-72B-Instruct-Turbo"
+
+
+
+from datetime import datetime
 
 app = Flask(__name__)
+# app.config["REDIS_URL"] = "redis://127.0.0.1:6379"
+# app.register_blueprint(sse, url_prefix='/stream')
 
+socketio = SocketIO(app)
 
 mongo_client = MongoManager("Timenest")
 
@@ -71,18 +103,6 @@ def create_account():
     mongo_client.insert_one('users', {"userID": userID,"UserName": username, "Password": password})
     return jsonify({"message": "Account created successfully"}), 201
 
-
-# @app.route('/get-user-metadata', methods=['GET'])
-# def get_user_metadata():
-#     try:
-#         userID = request.args.get("userID")
-#         print(f'GETTING {userID} information')
-#         metadata = mongo_client.find_info(userID)
-#         print(metadata)
-#         return jsonify(metadata),200
-#     except Exception as e:
-#         return jsonify({'message':f'Internal server error: {e}'}), 500
-
 @app.route('/get-user-metadata', methods=['GET'])
 def get_user_metadata():
     try:
@@ -108,24 +128,20 @@ def get_user_metadata():
     except Exception as e:
         return jsonify({'message':f'Internal server error: {e}'}), 500
 
-# @app.route('/add-task',methods=['POST'])
-# def add_task():
-#     data = request.json
-#     print(data)
-#     userID = data.get("userID")
-#     taskName = data.get("taskName")
-#     taskDescription = data.get("taskDescription")
-#     startTime = data.get("startTime")
-#     endTime = data.get("endTime")
-#     color = data.get("taskColor")
-#     if not all([taskName, startTime, endTime]):
-#         return jsonify({'error': 'Missing required fields'}), 400
-#     mongo_client.insert_one('tasks',{'userID':userID,'taskName':taskName,'taskDescription':taskDescription,'startTime':startTime,'endTime':endTime,'taskcolor':color})
-#     trigger_metadata(userID)
-#     return jsonify({'message':'add task successfully'})
-from datetime import datetime, timedelta
-from dateutil import parser
-
+@socketio.on('connect')
+def handle_connect():
+    print('Client connected')
+    
+@app.route('/send_add_data',methods=['POST'])
+def send_message():
+    taskData = request.json
+    if taskData:
+        send_data_to_frontend(taskData)
+        return jsonify({"status":"success"}), 200
+    else:
+        return jsonify({"status": "error", "message": "No message provided"}), 400
+def send_data_to_frontend(taskData):
+    socketio.emit('new_data',taskData)
 @app.route('/add-task', methods=['POST'])
 def add_task():
     data = request.json
@@ -177,7 +193,7 @@ def delete_task():
     # startTime = data.get("startTime")
     # endTime = data.get("endTime")
     # color = data.get("taskColor")
-    if not all([userID, taskName, taskDescription]):
+    if not all([userID, taskName]):
         return jsonify({'error': 'Missing required fields'}), 400
     mongo_client.delete_many('tasks',{'taskName':taskName,'taskDescription':taskDescription})
     trigger_metadata(userID)
@@ -251,6 +267,10 @@ CLUTCH's Back Office Team.
     except ValueError:
         return jsonify({"status": "error", "message": "Invalid token"}), 400
     
-    
+
 if __name__ == '__main__':
     app.run(debug=True,port='5001',host='0.0.0.0')
+    # socketio.run(app, host='0.0.0.0', port=5001, debug=True)
+    
+    # asking = "hi"
+    # print(chatbot_response(asking,"109356546733291536481"))
