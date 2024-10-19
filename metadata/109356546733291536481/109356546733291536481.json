@@ -99,27 +99,19 @@
         },
         {
             "userID": "109356546733291536481",
-            "taskName": "Swimming",
-            "taskDescription": "Go swimming",
-            "startTime": "2024-10-21T18:00:00.000Z",
-            "endTime": "2024-10-21T19:00:00.000Z",
-            "taskcolor": "green"
+            "taskName": "play pickleball",
+            "taskDescription": "",
+            "startTime": "2024-10-17T14:00:00.000Z",
+            "endTime": "2024-10-17T16:00:00.000Z",
+            "taskcolor": ""
         },
         {
             "userID": "109356546733291536481",
-            "taskName": "Swimming",
-            "taskDescription": "Go swimming",
-            "startTime": "2024-10-21T18:00:00.000Z",
-            "endTime": "2024-10-21T19:00:00.000Z",
-            "taskcolor": "green"
-        },
-        {
-            "userID": "109356546733291536481",
-            "taskName": "Swimming",
-            "taskDescription": "Go swimming",
-            "startTime": "2024-10-21T18:00:00.000Z",
-            "endTime": "2024-10-21T19:00:00.000Z",
-            "taskcolor": "green"
+            "taskName": "new task",
+            "taskDescription": "",
+            "startTime": "2024-10-20T09:00:00.000Z",
+            "endTime": "2024-10-20T10:00:00.000Z",
+            "taskcolor": ""
         }
     ],
     "group": [],

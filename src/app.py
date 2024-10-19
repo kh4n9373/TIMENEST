@@ -16,26 +16,66 @@ from pydantic import BaseModel
 from langchain.memory import ConversationBufferMemory
 from utils import convert_to_js,trigger_metadata
 import re
-from config.config_env import TOGETHER_API_KEY
+from config.config_env import TOGETHER_API_KEY,PLAY_HT_USER_ID,PLAY_HT_API_KEY
 from datetime import timedelta
 from dateutil import parser
-
+import speech_recognition as sr
+from pyht import Client
+from pyht.client import TTSOptions
+from dotenv import load_dotenv
+import io
 mongo_client = MongoManager("Timenest")
 
 
-memory = ConversationBufferMemory(
-    return_messages=True,
-    k=2
-)
+# memory = ConversationBufferMemory(
+#     return_messages=True,
+#     k=2
+# )
 
-userID = ""
+# userID = ""
 
 
 class Prompt(BaseModel):
     input: str
-client = OpenAI(api_key=TOGETHER_API_KEY, base_url='https://api.together.xyz/v1')
+# client = OpenAI(api_key=TOGETHER_API_KEY, base_url='https://api.together.xyz/v1')
 
-DEFAULT_MODEL = "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo"
+speech_client = Client(
+    user_id=PLAY_HT_USER_ID,
+    api_key=PLAY_HT_API_KEY,
+)
+
+def recognize_speech_from_microphone():
+    recognizer = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Say something!")
+        audio = recognizer.listen(source)
+        try:
+            text = recognizer.recognize_google(audio)
+            print(f"{text}")
+            return text
+        except sr.UnknownValueError:
+            return "Google Speech Recognition could not understand audio"
+        except sr.RequestError:
+            return "Could not request results from Google Speech Recognition service"
+
+# def chatbot_response(input_text):
+#     # This is a placeholder for your chatbot function
+#     # Replace this with your actual chatbot logic
+#     response = f"You said: {input_text}"
+#     return response
+
+def text_to_speech(text):
+    options = TTSOptions(voice="s3://voice-cloning-zero-shot/775ae416-49bb-4fb6-bd45-740f205d20a1/jennifersaad/manifest.json")
+    audio_chunks = speech_client.tts(text, options, voice_engine="PlayHT2.0-turbo")
+    
+    # Combine all audio chunks into a single byte stream
+    audio_stream = io.BytesIO()
+    for chunk in audio_chunks:
+        audio_stream.write(chunk)
+    
+    audio_stream.seek(0)
+    return audio_stream
+# DEFAULT_MODEL = "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo"
 # DEFAULT_MODEL = "mistralai/Mixtral-8x22B-Instruct-v0.1"
 # DEFAULT_MODEL = "Qwen/Qwen2.5-72B-Instruct-Turbo"
 
@@ -266,7 +306,25 @@ CLUTCH's Back Office Team.
             
     except ValueError:
         return jsonify({"status": "error", "message": "Invalid token"}), 400
-    
+
+
+@app.route('/recognize_speech', methods=['POST'])
+def recognize_speech():
+    text = recognize_speech_from_microphone()
+    return jsonify({'text': text})
+
+@app.route('/get_response', methods=['POST'])
+def get_response():
+    user_text = request.json['text']
+    userID = request.json['userID']
+    response = chatbot_response(user_text,userID)
+    return jsonify({'response': response})
+
+@app.route('/text_to_speech', methods=['POST'])
+def get_speech():
+    text = request.json['text']
+    audio = text_to_speech(text)
+    return audio, 200, {'Content-Type': 'audio/mpeg'}
 
 if __name__ == '__main__':
     app.run(debug=True,port='5001',host='0.0.0.0')

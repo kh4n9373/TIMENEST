@@ -203,7 +203,7 @@ def get_user_information(client, mode: str = "week", user_id: str = ''):
                     existed = 1 
             if existed == 0: 
                 user['categories'].append([map_category, task[1]])
-
+    print(users_task_analysist)
     return users_task_analysist
 import matplotlib.pyplot as plt
 import numpy as np

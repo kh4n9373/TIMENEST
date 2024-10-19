@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel="stylesheet" href="/static/styles/style.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
   <title>Timenest</title>
 </head>
 
@@ -20,7 +20,7 @@
     <header>
       <nav class="nav-bar" id="navbar">
         <div class="nav-wrapper">
-          <a href="#"><img id="logo" src="/static/Logo_Landing.svg" alt="timenest"></a>
+          <a href="#"><img id="logo" src="/static/images/Logo_Landing.svg" alt="timenest"></a>
           <div class="nav-menu">
             <ul class="nav-list">
               <li class="nav-items"><a href="#hero">Home</a></li>
@@ -37,7 +37,7 @@
         <div class="container">
           <div class="even-columns">
             <div class="left-side">
-              <img src="/static/Desktop - 1 - Main_Resize_Blue.png" alt="interface" class="">
+              <img src="/static/images/Desktop - 1 - Main_Resize_Blue.png" alt="interface" class="">
             </div>
             <div class="right-side">
               <h1 class="heading-hero"><span id="content1">The Google Calendar</span>
@@ -93,7 +93,7 @@
             <p class="text-1-s2">Wise and concise with the integration of AI, Timenest shapes the way you work.</p>
           </div>
         </div>
-        <img src="/static/Desktop - 1 - Main_Resize_Pink.png" alt="interface2" class="">
+        <img src="/static/images/Desktop - 1 - Main_Resize_Pink.png" alt="interface2" class="">
         <div class="text-box">
           <div class="text-item">
             <h2 class="heading-2-s2">Your life, your productivity.</h2>
@@ -108,7 +108,7 @@
     <div class="container">
       <div class="footer-container">
         <div class="ls">
-          <a href="#hero"><img src="/static/Logo_Landing.svg" alt="timenest"></a>
+          <a href="#hero"><img src="/static/images/Logo_Landing.svg" alt="timenest"></a>
           <ul>
             <li><a href="https://github.com/INSANE-CLUTCH/TIMENEST" target="_blank"><i class="fa-brands fa-github" style="color: #FFFCEC;"></i></a></li>
             <li><a href="#"><i class="fa-brands fa-linkedin" style="color: #FFFCEC;"></i></a></li>
