@@ -1,0 +1,70 @@
+#month-view {
+    width: 100%;
+    height: 100%;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);   
+}
+
+/* Header for the days of the week */
+#month-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+.day_of_week {
+    color: #333;
+    background-color: none;
+}
+
+/* Days in the month */
+#month-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);  
+    grid-auto-rows: auto;
+}
+
+/* Common style for each day slot */
+.day-slot {
+    position: relative; 
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    overflow-y: auto;
+    height: 150px; 
+    border-right: 1px solid #999;
+    border-bottom: 1px solid #999;
+    padding-top: 20px;
+    transition: background-color 0.3s;
+    gap: 3px;
+}
+
+.day-in-month {
+    position: absolute; /* Prevent scrolling with the day-slot */
+    font-size: 16px;
+    top: 5px; /* Adjust position */
+    width: fit-content; 
+}
+
+/* Style for hover effect on day slots */
+.day-slot:hover {
+    background-color: #ddd;
+}
+
+/* Differentiate between previous, current, and next month days */
+.prev-month, .next-month {
+    color: #999;
+    font-size: 18px;
+}
+
+.current-month {
+    color: #000;
+}
