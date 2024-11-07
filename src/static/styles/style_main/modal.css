@@ -1,0 +1,114 @@
+.createTaskModal {
+  display: flex;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.createTaskModal.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  background-color: #fefefe;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 500px;
+  border-radius: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: scale(0.7);
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.createTaskModal.show .modal-content {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.close-button {
+  color: #aaa;
+  float: right;
+  font-size: 32px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal-content h2 {
+  padding-top: 8px;
+  margin-bottom: 20px;
+  color: #4361ee;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-content label {
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+.modal-content input,
+.modal-content textarea {
+  margin-top: 5px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  resize: none;
+}
+
+.modal-content button[type='submit'] {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #4361ee;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.modal-content button[type='submit']:hover {
+  background-color: #3148e6;
+}
+
+.modal-content input[type='color'] {
+  -webkit-appearance: none;
+  border: none;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+}
+
+.modal-content input[type='color']::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.modal-content input[type='color']::-webkit-color-swatch {
+  border: none;
+  border-radius: 50%;
+}
