@@ -2,7 +2,7 @@ let currentWeek = getStartOfCenteredWeek(new Date());
 let endWeek = new Date();
 
 function initializeCalendar() {
-  const timeSlots = document.querySelector('.time-slots');  
+  const timeSlots = document.querySelector('.time-slots');
   const timeInterval = document.querySelector('.time_interval .time');
 
   // Xóa các phần tử thời gian hiện có
@@ -17,7 +17,6 @@ function initializeCalendar() {
   // timeSlots.addEventListener('click', onMouseClick);
   document.addEventListener('mouseup', onMouseUp);
 }
-
 
 function createTimeIntervalsAndSlots() {
   const timeSlots = document.querySelector('.time-slots');
@@ -59,8 +58,7 @@ function createTimeIntervalsAndSlots() {
 
       timeSlot.dataset.date = `${year}-${month
         .toString()
-        .padStart(2, '0')}-${day.toString()
-          .padStart(2, '0')}`;
+        .padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
       timeSlot.dataset.time = formatTimeForInput(hours, minutes);
       timeSlot.dataset.day = j;
       if (i % 4 === 1 || i % 4 === 3) {
@@ -166,7 +164,6 @@ let isDragging = false;
 let startSlot = null;
 let endSlot = null;
 
-
 function onMouseDown(e) {
   if (e.target.classList.contains('time-slot')) {
     isDragging = true;
@@ -211,7 +208,7 @@ function highlightRange(start, end) {
   const slots = Array.from(document.querySelectorAll('.time-slot'));
   const startIndex = slots.indexOf(start);
   const endIndex = slots.indexOf(end);
- 
+
   const [row1, row2] = [
     Math.floor(startIndex / 7) - 1,
     Math.floor(endIndex / 7),

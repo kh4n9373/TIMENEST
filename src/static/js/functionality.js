@@ -46,3 +46,10 @@ function changeMonthView(){
 document.getElementById('change-week').addEventListener('click', changeWeekView);
 
 document.getElementById('change-month').addEventListener('click', changeMonthView);
+
+document.getElementById('btn-today').addEventListener('click', function(){
+  console.log("asdfa");
+  currentWeek = getStartOfCenteredWeek(new Date());
+  endWeek.setDate(currentWeek.getDate() + 6);
+  initializeCalendar();
+});

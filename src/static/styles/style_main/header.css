@@ -60,7 +60,7 @@
   transform: scale(1.02);
 }
 
-.btn-today {
+#btn-today {
   background-color: transparent;
   border: none;
   color: white;
