@@ -1,3 +1,4 @@
+![Slide 16_9 - 6](https://github.com/user-attachments/assets/c7b3ec4d-2d8e-41fc-98d3-6a2bac98887c)
 
 # Overview of the project
 
