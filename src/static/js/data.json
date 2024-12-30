@@ -1,0 +1,24 @@
+{
+    "task_completion": [
+        {
+            "time_period": "week",
+            "tasks_assigned": 10,
+            "tasks_completed": 7
+        },
+        {
+            "time_period": "month",
+            "tasks_assigned": 40,
+            "tasks_completed": 30
+        }
+    ],
+    "categories": [
+        ["Growth", 35, 20, 70, 1.4],
+        ["Wellness", 30, 18, 30, 2.3],
+        ["Social", 15, 9, 55, 2.5],
+        ["Family", 15, 9, 60, 1.8],
+        ["Career", 5, 3, 80, 2.8]
+      ]
+}
+
+
+   

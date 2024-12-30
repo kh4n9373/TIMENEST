@@ -24,6 +24,7 @@ from pyht import Client
 from pyht.client import TTSOptions
 from dotenv import load_dotenv
 import io
+from data import *
 mongo_client = MongoManager("Timenest")
 
 
@@ -90,6 +91,9 @@ app = Flask(__name__)
 socketio = SocketIO(app)
 
 mongo_client = MongoManager("Timenest")
+@app.route('/health_check')
+def health_check():
+    return {"message":"ok"}
 
 @app.route('/')
 def index():
@@ -99,10 +103,20 @@ def index():
 def create_account_page():
     return render_template('login.html')
 
+@app.route('/month_view')
+def create_month_view():
+    return render_template('month_view.html')
+
+@app.route('/week_view')
+def create_week_view():
+    return render_template('week_view.html')
+
 @app.route('/calendar')
 def render_calendar():
     username = request.args.get('username', 'Guest')
     userID = mongo_client.find_one(collection_name='users',filter={'UserName':username})['userID']
+    print('USERNAME: ',username)
+    print('USERID', userID)
     return render_template('main.html', username=username,userID=userID)
     # return render_template('main.html')
 
@@ -149,19 +163,22 @@ def get_user_metadata():
         userID = request.args.get("userID")
         print(f'GETTING {userID} information')
         metadata = mongo_client.find_info(userID)
-        
+        print(metadata)
+
         # Convert times for each task
         if 'tasks' in metadata:
             for task in metadata['tasks']:
                 if 'startTime' in task:
                     start_time_utc = parser.isoparse(task['startTime'])
-                    start_time_ict = start_time_utc - timedelta(hours=7)
-                    task['startTime'] = start_time_ict.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+                    # start_time_ict = start_time_utc - timedelta(hours=7)
+                    start_time_ict = start_time_utc 
+                    task['startTime'] = start_time_ict.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-7] 
                 
                 if 'endTime' in task:
                     end_time_utc = parser.isoparse(task['endTime'])
-                    end_time_ict = end_time_utc - timedelta(hours=7)
-                    task['endTime'] = end_time_ict.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+                    # end_time_ict = end_time_utc - timedelta(hours=7)
+                    end_time_ict = end_time_utc
+                    task['endTime'] = end_time_ict.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-7] 
         
         print(metadata)
         return jsonify(metadata), 200
@@ -180,8 +197,11 @@ def send_message():
         return jsonify({"status":"success"}), 200
     else:
         return jsonify({"status": "error", "message": "No message provided"}), 400
+    
 def send_data_to_frontend(taskData):
+    print("SOCKET DATA TO FE: ",taskData)
     socketio.emit('new_data',taskData)
+    
 @app.route('/add-task', methods=['POST'])
 def add_task():
     data = request.json
@@ -219,7 +239,14 @@ def add_task():
         'endTime': endTime_ict_str,
         'taskcolor': color
     })
-    
+    print({
+        'userID': userID,
+        'taskName': taskName,
+        'taskDescription': taskDescription,
+        'startTime': startTime_ict_str,
+        'endTime': endTime_ict_str,
+        'taskcolor': color
+    })
     trigger_metadata(userID)
     return jsonify({'message': 'add task successfully'})
 
@@ -240,15 +267,6 @@ def delete_task():
     return jsonify({'message':'delete task successfully'})
 
 
-@app.route("/infer", methods=['POST'])
-def get_inference():
-    data = request.json
-    input = data.get("input")
-    userID = data.get("ID")
-    print(input)
-    response = chatbot_response(input,userID)
-    print(response)
-    return {"response": convert_to_js(response)}
 
 
 @app.route('/callback', methods=['POST'])
@@ -313,12 +331,30 @@ def recognize_speech():
     text = recognize_speech_from_microphone()
     return jsonify({'text': text})
 
+@app.route("/infer", methods=['POST'])
+def get_inference():
+    data = request.json
+    input = data.get("input")
+    userID = data.get("ID")
+    print(input)
+    response = chatbot_response(input,userID)
+    print(response)
+    return {"response": convert_to_js(response)}
+
 @app.route('/get_response', methods=['POST'])
 def get_response():
     user_text = request.json['text']
     userID = request.json['userID']
     response = chatbot_response(user_text,userID)
     return jsonify({'response': response})
+
+@app.route('/plot_data', methods=['GET'])
+def plot_data():
+    return DATA
+
+@app.route('/plot_response', methods=['GET'])
+def plot_response():
+    return RESPONSE
 
 @app.route('/text_to_speech', methods=['POST'])
 def get_speech():

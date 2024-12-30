@@ -40,7 +40,17 @@ DEFAULT_MODEL = "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo"
 # DEFAULT_MODEL = "mistralai/Mixtral-8x22B-Instruct-v0.1"
 # DEFAULT_MODEL = "Qwen/Qwen2.5-72B-Instruct-Turbo"
 
+import random
 
+def generate_random_color():
+    # Generate a random integer between 0 and 16777215 (hexadecimal #000000 to #FFFFFF)
+    random_number = random.randint(0, 0xFFFFFF)
+    # Convert the number to a hexadecimal string and format it as a color code
+    hex_color = f"#{random_number:06x}"
+    return hex_color
+
+# Example usage
+# print(generate_random_color())
 
 from datetime import datetime
 
@@ -56,7 +66,6 @@ def current_date():
     year = now.year
     hour = now.hour
     return (f"{current_day}, {month} {day}, {year}, {hour}")
-
 
 
 def load_documents_from_json(file_path):
@@ -78,8 +87,7 @@ def load_documents_from_json(file_path):
 ### FUNCTION CALLING 
 
 ### SAVE CONSTRAINT
-def saving_constraint(query, file_path=f'constraint/{userID}/datalake.json'):
-    global userID
+def saving_constraint(query, userID):
     file_path = f'constraint/{userID}/datalake.json'
     print(file_path)
     timestamp = datetime.now().isoformat()
@@ -105,15 +113,24 @@ def saving_constraint(query, file_path=f'constraint/{userID}/datalake.json'):
     return json.dumps({"message":"user will not available at that time"})
     
 # LOAD CONSTRAINT
-def reading_constraint(query):
-    global userID
-    documents_path = f"constraint/{userID}/"
+def load_constraint(ID):
+    documents_path = f"../constraint/{ID}/datalake.json"
     try:
-        vectorstore = create_rag_system(documents_path)
-        response = query_rag_system(vectorstore, query, model=DEFAULT_MODEL)
-        return json.dumps({"response": response})
-    except Exception as e:
-        return json.dumps({"error": str(e)})
+        
+        with open(documents_path, 'r') as f:
+            data = json.load(f)
+        return data
+    except:
+        return {}
+# def reading_constraint(query):
+#     global userID
+#     documents_path = f"constraint/{userID}/"
+#     try:
+#         vectorstore = create_rag_system(documents_path)
+#         response = query_rag_system(vectorstore, query, model=DEFAULT_MODEL)
+#         return json.dumps({"response": response})
+#     except Exception as e:
+#         return json.dumps({"error": str(e)})
     
 # DOMAIN 
 def domain_asking(query):
@@ -144,7 +161,14 @@ def database_asking(query):
         return json.dumps({"error": str(e)})
 
 # DATABASE ADD TASK 
-def database_addtask(userID,taskName="None",taskDescript="None",startTime="None",endTime="None",taskColor="#000000"):
+def database_add_task(
+    userID,
+    taskName="None",
+    taskDescript="None",
+    startTime="None",
+    endTime="None",
+    taskColor="#000000"
+):
     url = 'http://127.0.0.1:5001/send_add_data'
     
     try:
@@ -165,10 +189,52 @@ def database_addtask(userID,taskName="None",taskDescript="None",startTime="None"
         except Exception as e:
             print(f"Error sending message: {e}")
         mongo_client.insert_one('tasks', taskData)
+        print(taskData)
         trigger_metadata(userID)
         return {'message': 'add task successfully'}
     except Exception as e:
         return {'message':f"Error {e} happened, can not add task"}
+    
+def database_add_multiple_tasks(userID, tasks):
+    """
+    Add multiple tasks to the database.
+    
+    Args:
+        userID: User identifier
+        tasks: List of dictionaries, each containing task data with keys:
+               taskName, taskDescript, startTime, endTime, taskColor
+    """
+    url = 'http://127.0.0.1:5001/send_add_data'
+    results = []
+    
+    try:
+        for task in tasks['tasks']:
+            taskData = {
+                'userID': userID,
+                'taskName': task.get('taskName', 'None'),
+                'taskDescription': task.get('taskDescript', ''),
+                'startTime': task.get('startTime', 'None'),
+                'endTime': task.get('endTime', 'None'),
+                'taskcolor': task.get('taskColor', '#000000')
+            }
+            
+            try:
+                response = requests.post(url, json=taskData)
+                if response.status_code != 200:
+                    results.append(f'Failed to send task {taskData["taskName"]} to frontend')
+                    continue
+                print('HEREEEEEEE', taskData)
+                mongo_client.insert_one('tasks', taskData)
+                results.append(f'Successfully added task {taskData["taskName"]}')
+                
+            except Exception as e:
+                results.append(f'Error processing task {taskData["taskName"]}: {str(e)}')
+                
+        trigger_metadata(userID)
+        return {'message': 'Batch task processing complete', 'details': results}
+        
+    except Exception as e:
+        return {'message': f'Fatal error in batch processing: {str(e)}'}
     
 def load_documents_from_local(path):
     docs = []
@@ -309,27 +375,27 @@ tools = [
             }
         }
     },
-    {
-        "type": "function",
-        "function": {
-            "name": "reading_constraint",
-            "description": "Based on constraints, consider suggestion for scheduling",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "asking": {
-                        "type": "string",
-                        "description": "Asking for task scheduling"
-                    }
-                },
-                "required": ["asking"]
-            }
-        }
-    },
+    # {
+    #     "type": "function",
+    #     "function": {
+    #         "name": "reading_constraint",
+    #         "description": "Based on constraints, consider suggestion for scheduling",
+    #         "parameters": {
+    #             "type": "object",
+    #             "properties": {
+    #                 "asking": {
+    #                     "type": "string",
+    #                     "description": "Asking for task scheduling"
+    #                 }
+    #             },
+    #             "required": ["asking"]
+    #         }
+    #     }
+    # },
     {
         "type":"function",
         "function": {
-            "name": "database_addtask",
+            "name": "database_add_task",
             "description": "Pass by parameters equivalent with information user gave you to ask their task",
             "parameters": {
                 "type":"object",
@@ -339,7 +405,7 @@ tools = [
                         "description":"Name of the task"
                     },
                     "taskDescript": {
-                        "type":"string",
+                        "type":"string", 
                         "description":"Details description of the task."
                     },
                     "startTime":{
@@ -352,14 +418,57 @@ tools = [
                     },
                     "taskColor":{
                         "type":"string",
-                        "description":"color when display the task"
+                        "description":"color when display the task",
+                        "default": generate_random_color()
+
                     }    
                 },
                 "required":["taskName","startTime","endTime"]
             }
         }
+    },
+    {
+        "type":"function",
+        "function":{
+            "name":"database_add_multiple_tasks",
+            "description": " For each tasks, pass by parameters equivalent with information of that tasks user gave to you",
+            "parameters":{
+                "type":"object",
+                "properties": {
+                    "tasks": {
+                        "type":"array",
+                        "properties": {
+                            "taskName": {
+                                "type":"string",
+                                "description":"Name of the task"
+                            },
+                            "taskDescription": {
+                                "type":"string",
+                                "description":"Task description"
+                            },
+                            "startTime":{
+                                "type":"string",
+                                "description":"Start time (ISO 8601: YYYY-MM-DDThh:mm:ss.sssZ)"
+                            },
+                            "endTime": {
+                                "type": "string",
+                                "description": "End time (ISO 8601: YYYY-MM-DDThh:mm:ss.sssZ)"
+                            },
+                            "taskColor": {
+                                "type": "string",
+                                "description": "Display color (hex code)",
+                                "default": generate_random_color()
+                            },
+                            "required": ["taskName", "startTime", "endTime"]
+                        }
+                    }
+                }
+            }
+        }
     }
+    
 ]
+
 
 def chatbot_response(user_input,ID):
     global userID
@@ -382,6 +491,7 @@ def chatbot_response(user_input,ID):
             Provide accurate and sufficient answers, avoiding overly long or too brief responses.
             You will help users by guiding them to ask questions, answering inquiries, and providing accurate information about schedule management from the provided database's document you connected to.
             Avoid sensitive or unrelated questions. Do not answer questions related to politics or religion.
+            You should not schedule any task from 11 pm to 5 am unless user tells you to do that.
             
             Below are the 6 main tasks you will perform:
             - Answer questions about events in the schedule.
@@ -395,12 +505,15 @@ def chatbot_response(user_input,ID):
             - When user request advice, tip and tricks for better scheduling and time management or explaining why they failed finishing previous tasks (DOMAIN ASKING): You are provided with the documents with time management skills, you can infer it when instructing user how to manage time effectively.
             - When user ask information about him/her-self, him/her-username or their calendar (relate to their history,NOT THE FUTURE) (DATABASE ASKING): You are also embedded with user's database, call the function to read the database (json file) and response relevant information from the json file. When you get information of tasks, just tell them about task name, task description, start Time and endTime, and dedscript those information in natural language way.
             - When user tell you the bad condition that he/she will not have time (or not available at that time (SAVE CONSTRAINT): you are able to identify the message from user which make their schedule being limited, then you call saving constraint function to note that time-constraint event. So that,in the future suggestion for task management, you can look at constraint you noted and avoid that for future schedule suggest consideration.  
-            - When user ask you to suggest planning their tasks or rescheduling effetcively (READ CONSTRAINT): You are connected to the constraint hub you saved before, when user ask for task scheduling or anything about scheduling, you need to load the constraint, then consider the constraints from this constraint-hub for better scheduling. You are not allow to schedule for user the event conflict with the constraints. 
+            - When user ask you to suggest planning their tasks or rescheduling effetcively : You are connected to the constraint you saved before, , consider the constraints from this constraint-hub for better scheduling. You are not allow to schedule for user the event conflict with the constraints. Constraint will be descript below.
             - When user ask you to add a tasks, if they didn't your provide you these information, ask them: taskName (required), startTime (required), endTime (required), taskDescript (optional), taskColor (optional). startTime/endTime user provided to you can be natural language form please convert them to ISO 8601 : %Y-%m-%dT%H:%M:%S.%fZ" before passing into the database_addtask function. 
             If function calling return None, you have to response that question using your knowledge and try to think step by step to infer the answer. 
             
             ### IMPORTANT ###
-            Never return None response.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+            Never return None response.        
+            
+            ### CONSTRAINT HERE ###
+            {load_constraint(userID)}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
         """},
         {"role": "user", "content": user_input}
     ]
@@ -447,17 +560,20 @@ def chatbot_response(user_input,ID):
                 print('DATABASE_ASKING')
                 function_response = database_asking(query=function_args.get("query"))
 
-            elif function_name == "reading_constraint":
-                print('READING_CONSTRAINT')
-                function_response = reading_constraint(query=function_args.get("asking"))
+            # elif function_name == "reading_constraint":
+            #     print('READING_CONSTRAINT')
+            #     function_response = reading_constraint(query=function_args.get("asking"))
 
             elif function_name == "saving_constraint":
                 print('SAVING_CONSTRAINT')
                 function_response = saving_constraint(query=function_args.get("noting"))
-            elif function_name == "database_addtask":
-                print("DB ADD TASK")
-                function_response = database_addtask(userID=ID,taskName=function_args.get("taskName"),taskDescript=function_args.get("taskDescript"),startTime=function_args.get("startTime"),endTime=function_args.get("endTime"),taskColor=function_args.get("taskColor"))
                 
+            elif function_name == "database_add_task":
+                print("DB ADD TASK")
+                function_response = database_add_task(userID=ID,taskName=function_args.get("taskName"),taskDescript=function_args.get("taskDescript"),startTime=function_args.get("startTime"),endTime=function_args.get("endTime"),taskColor=function_args.get("taskColor"))
+            
+            elif function_name == "database_add_multiple_tasks":
+                function_response = database_add_multiple_tasks(userID=ID,tasks=function_args)
 
             messages.append(
                 {
@@ -487,17 +603,17 @@ def chatbot_response(user_input,ID):
         for tool_call in tool_calls:
             function_name = tool_call.function.name
             function_args = json.loads(tool_call.function.arguments)
-
+            print(function_args)
             if function_name == "domain_asking":
                 function_response = domain_asking(query=function_args.get("query"))
             elif function_name == "database_asking":
                 function_response = database_asking(query=function_args.get("query"))
-            elif function_name == "reading_constraint":
-                function_response = reading_constraint(query=function_args.get("asking"))
+            elif function_name == "database_add_multiple_tasks":
+                function_response = database_add_multiple_tasks(userID=ID,tasks=function_args)
             elif function_name == "saving_constraint":
                 function_response = saving_constraint(query=function_args.get("noting"))
-            elif function_name == "database_addtask":
-                function_response = database_addtask(userID=ID,taskName=function_args.get("taskName"),taskDescript=function_args.get("taskDescript"),startTime=function_args.get("startTime"),endTime=function_args.get("endTime"),taskColor=function_args.get("taskColor"))
+            elif function_name == "database_add_task":
+                function_response = database_add_task(userID=ID,taskName=function_args.get("taskName"),taskDescript=function_args.get("taskDescript"),startTime=function_args.get("startTime"),endTime=function_args.get("endTime"),taskColor=function_args.get("taskColor"))
                 
             messages.append(
                 {

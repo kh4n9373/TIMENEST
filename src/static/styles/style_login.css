@@ -242,7 +242,7 @@ body{
 }
 
 .toggle{
-    background-image: url('../images/Background-01.png'); /* Replace with your image path */
+    background-image: url('../Background-01.svg'); /* Replace with your image path */
     background-size: cover;
     background-position: center;
     height: 100%;
@@ -316,6 +316,9 @@ body{
     transition: background-color 0.3s ease;
 }
 
+.google-sign-in:hover {
+    /* background-color: #5000d1; Slightly darker on hover */
+}
 
 .google-icon {
     width: 20px;

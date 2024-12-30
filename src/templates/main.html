@@ -1,211 +1,308 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="icon" type="image/svg+xml" href="static/TIMENEST-05.svg" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Catamaran:wght@100..900&family=Outfit:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-            integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
-            crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/style_main.css') }}">        
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="static/TIMENEST-05.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Catamaran:wght@100..900&family=Outfit:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="../static/styles/style_main/style_main.css" />
 
-        <script>
-          const userID = "{{userID}}"; // This assumes the userID is passed from the Python script
-          const username = "{{username}}";
-        </script>
-        <!-- <script src="{{ url_for('static', filename='js/script.js') }}"></script> -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
-        <title>Timenest</title>
-    </head>
-    <body>
-        <div class="h__container">
-            <div class="h-col-1">
-                <img id="logo" src="/static/images/TIMENEST-05 1 Black.svg" alt="timenest" style="height: 34px;">
-                <button class="menu" data-tooltip="Main menu" aria-label="button" role="button">
-                    <img src="/static/images/Vector.svg" alt="menu button" style="height: 22px">
-                </button>
-                <img id="beta" src="/static/images/Colored Beta.svg" alt="timenest" style="height: 34px">
-                <!-- <div class="beta-button">
-                  <div class="beta-text">BETA</div>
-                </div> -->
-            </div>
-            <div class="group-right">
-              <div class="undo-redo">
-                  <button class="undo" data-tooltip="Undo" aria-label="button" role="button">
-                      <img src="/static/images/Undo.svg" alt="undo button" style="height: 20px">
-                  </button>
-                  <button class="redo" data-tooltip="Undo" aria-label="button" role="button">
-                      <img src="/static/images/Redo.svg" alt="redo button" style="height: 20px">
-                  </button>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+
+    <script>
+      const userID = '{{userID}}'; // This assumes the userID is passed from the Python script
+      console.log('userID',userID)
+      const username = '{{username}}';
+      // const evtSource = new EventSource("/stream");
+    </script>
+
+    <title>Timenest</title>
+  </head>
+  <body>
+    <div class="header">
+      <div class="h-col-1">
+          <img id="logo" src="/static/TIMENEST-05 1 Black.svg" alt="timenest" style="height: 30px;">
+          <button class="menu" data-tooltip="Main menu" aria-label="button" role="button">
+              <img src="/static/sc-status-icon.svg" alt="menu button" style="height: 24px">
+          </button>
+      </div>
+      <div class="group-right">
+        <div class="undo-redo">
+            <button class="undo" data-tooltip="Undo" aria-label="button" role="button">
+                <img src="/static/chevron-left.svg" alt="undo button" style="height: 20px">
+            </button>
+            <button class="redo" data-tooltip="Undo" aria-label="button" role="button">
+                <img src="/static/chevron-right.svg" alt="redo button" style="height: 20px">
+            </button>
+        </div>  
+        <p id="workspace-display">{{username}}'s workspace</p>
+        <div class="rightmost">
+            <button class="theme" id="theme"><img src="/static/editor-dot.svg" style="height: 26px"></button>
+            <button class="logout" id="logoutBtn" data-tooltip="Undo" aria-label="button" role="button">
+              <img src="/static/clear.svg" alt="logout button" style="height: 18px">
+            </button>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="item item-1" id="item1">
+          <div class="upper">
+              <button id="toggleText"><h1>Analysis</h1></button>
+              <button id="toggleButton"><img src="/static/expand.svg" style="width: 24px"></button>
+          </div>
+          <div class="slide-container" id="slider">
+              <div class="slide-content" id="slideContent">
+                <div class="display-zone">
+                  <div class="chart chart-1">
+                      <h2>Progress Bar</h2>
+                      <div class="progress-bar week">
+                        <div class="info">
+                          <p>Week</p>
+                          <p class="progress-text">0%</p>
+                        </div>
+                        <div id="progress-container">
+                            <div id="progress-bar"></div>
+                        </div>
+                        
+                      </div>
+                      <div class="progress-bar month">
+                        <div class="info">
+                          <p>Month</p>
+                          <p class="progress-text">0%</p>
+                        </div>
+                        <div id="progress-container">
+                            <div id="progress-bar"></div>
+                        </div>
+                      </div>
+                      <div id="summary" style="display: none"></div>
+                  </div>
+                </div>
+                <div class="display-zone">
+                    <div class="chart chart-2">
+                        <h2>Tasks Distribution</h2>
+                        <button class="switch-hour">Switch</button>
+                        <div class="chart-2-container">
+                          <div class="chart-2-items number1">
+                            <div class="color color-1"></div>
+                            <div class="text text-1">Growth</div>
+                            <div class="percentage percentage-1">35%</div>
+                          </div>
+                          <div class="chart-2-items number2">
+                            <div class="color color-2"></div>
+                            <div class="text text-2">Growth</div>
+                            <div class="percentage percentage-2">35%</div>
+                          </div>
+                          <div class="chart-2-items number3">
+                            <div class="color color-3"></div>
+                            <div class="text text-3">Growth</div>
+                            <div class="percentage percentage-3">35%</div>
+                          </div>
+                          <div class="chart-2-items number4">
+                            <div class="color color-4"></div>
+                            <div class="text text-4">Growth</div>
+                            <div class="percentage percentage-4">35%</div>
+                          </div>
+                          <div class="chart-2-items number5">
+                            <div class="color color-5"></div>
+                            <div class="text text-5">Growth</div>
+                            <div class="percentage percentage-5">35%</div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="display-zone">
+                  <div class="chart chart-3">
+                      <h2>Priorities vs. Completion Rate</h2>
+                      <div class="chart-3-container">
+                        <div class="priority">
+                          <p class="title">Priority ranking</p>
+                          <div class="priority-ranking">
+                            <p id="p-most" class="most important"></p>
+                            <div id="priorityBar" class="priority-bar"></div>
+                            <p id="p-least" class="least important"></p>
+                          </div>
+                        </div>
+                        <div class="completion">
+                          <p class="title">Completion rate ranking</p>
+                          <div class="completion-ranking">
+                            <p id="c-most" class="most important"></p>
+                            <div id="completionBar" class="completion-bar"></div>
+                            <p id="c-least" class="least important"></p>
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+                </div>
               </div>
-              <p id="workspace-display">{{username}}'s workspace</p>
-              <div>
-                  <button class="logout" id="logoutBtn" data-tooltip="Undo" aria-label="button" role="button">
-                      <img src="/static/images/log-out-outline.svg" alt="logout button" style="height: 32px">
-                  </button>
+              <div class="bottom-part">
+                  <button class="btn" id="prevButton"><img src="/static/caret-left_w.svg" style="width: 20px"></button>
+                  <div class="dot-container" id="indicator"></div>
+                  <button class="btn" id="nextButton"><img src="/static/caret-right_w.svg" style="width: 20px"></button>
               </div>
           </div>
+      </div>
+      <div class="item item-2">
+          <div class="div-create">
+            <button class="create" id="createBtn" aria-label="button" role="button">
+                <img src="/static/fi-ss-add.svg" alt="plus" style="width: 50px">
+                <div class="create-text">Create</div>
+            </button>
+          </div>
+
+          <div id="createTaskModal" class="createTaskModal">
+            <div class="modal-content">
+              <span class="close-button">&times;</span>
+              <h2>Create New Task</h2>
+              <form id="createTaskForm">
+                Task Name: <input type="text" id="taskName" /><br />
+                Description: <textarea id="taskDescription"></textarea><br />
+                Start Time:
+                <input type="datetime-local" id="startTime" step="900" /><br />
+                End Time: <input type="datetime-local" id="endTime" /><br />
+                Task Color:
+                <input type="color" id="taskColor" value="#0000FF" /><br />
+                <button type="submit">Create Task</button>
+              </form>
+            </div>
+          </div>
+
+          <div class="chatbot">
+            <div class="chatbot-header">
+                <h1>Timenest</h1>
+            </div>
+            <div class="chat-window">
+                <div class="bot-message">
+                    <p>Hi {{username}}! How can I help you today?</p>
+                </div>
+            </div>
+            <div class="input-area">
+                <input type="text" placeholder="Type a message..." required>
+                <button class="send"><img src="/static/Arrow 1.svg"></button>
+                <button class="voice" id="recordButton">🎤</button>
+            </div>
         </div>
-        <main class="main">
-            <div class="sidebar">
-                <div class="sidebar-content__wrapper1">
-                    <div class="short-cut1">
-                        <button class="sc-1" aria-label="button" role="button">
-                            <img src="/static/images/fi-ss-envelope.svg" alt="envelope">
-                        </button>
-                        <button class="sc-1" aria-label="button" role="button">
-                            <img src="/static/images/fi-ss-shopping-bag.svg" alt="shopping">
-                        </button>
-                        <button class="sc-1" aria-label="button" role="button">
-                            <img src="/static/images/fi-ss-basketball.svg" alt="basketball">
-                        </button>
-                    </div>  
-                    
-                    <div class="div-manage">
-                        <button class="manage" aria-label="button" role="button">
-                            <p>Manage</p>
-                        </button>
-                    </div>
-                
-                    <div class="div-create">
-                        <button class="create" id="createBtn" aria-label="button" role="button">
-                            <img src="/static/images/fi-ss-add.svg" alt="plus" style="width: 55px">
-                            <div class="create-text">Create
-                            </div>
-                        </button>
-                    </div>
-                    
-                    <div id="createTaskModal" class="createTaskModal">
-                        <div class="modal-content">
-                            <span class="close-button">&times;</span>
-                            <h2>Create New Task</h2>
-                            <form id="createTaskForm">
-                                <!-- <label for="taskName">Task Name:</label>
-                                <input type="text" id="taskName" name="taskName" required>
-                    
-                                <label for="taskDescription">Description:</label>
-                                <textarea id="taskDescription" name="taskDescription" rows="3"></textarea>
-                    
-                                <label for="startTime">Start Time:</label>
-                                <input type="datetime-local" id="startTime" name="startTime" required>
-                    
-                                <label for="endTime">End Time:</label>
-                                <input type="datetime-local" id="endTime" name="endTime" required>
-                                
-                                <label for="taskColor">Task Color:</label>
-            <input type="color" id="taskColor" name="taskColor" value="#4361ee">
-                                <button type="submit">Create Task</button> -->
-                                Task Name: <input type="text" id="taskName"><br>
-                                Description: <textarea id="taskDescription"></textarea><br>
-                                Start Time: <input type="datetime-local" id="startTime"><br>
-                                End Time: <input type="datetime-local" id="endTime"><br>
-                                Task Color: <input type="color" id="taskColor"><br>
-                                <button type="submit">Create Task</button>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="tracker">
-                        <div class="progress-container">
-                            <span class="time-period"></span>
-                            <div class="progress-bar"></div>
-                        </div>
-                    </div>
-                    <div class="chatbot">
-                        <div class="header">
-                            <h1>Clutch AI</h1>
-                        </div>
-                        <div class="chat-window">
-                            <div class="bot-message">
-                                <p>Hi {{username}}! How can I help you today?</p>
-                            </div>
-                        </div>
-                        <div class="input-area">
-                            <input type="text" placeholder="Type a message..." required>
-                            <button class="talking"><img src="/static/images/Arrow 1.svg"></:></button>
-                            <button class="send"><img src="/static/images/Arrow 1.svg"></button>
-                        </div>
-                    </div>
-                    
-                    <!-- Move this script to the end of the body -->
-                    
-                </div>
+      </div>
+          <!-- Move this script to the end of the body -->
+      <!-- Khung hiển thị thông tin -->
+      <div id="taskInfo" class="task-info">
+        <div class="task-content">
+          <button id="closeButton" class="close-btn">x</button>
+          <button id="editButton" class="edit-btn">✎</button>
+          <button id="deleteButton" class="delete-btn">🗑️</button>
+          <h3 id="displayTaskName"></h3>
+          <p>
+            <strong>Description:</strong>
+            <span id="displayTaskDescription"></span>
+          </p>
+          <p><strong>From:</strong> <span id="displayFromDate"></span></p>
+          <p><strong>To:</strong> <span id="displayToDate"></span></p>
+          <p><strong>Duration:</strong> <span id="displayDuration"></span></p>
+          <p>
+            <strong>Status:</strong>
+            <select id="statusSelect">
+              <option value="In progress">In progress</option>
+              <option value="Pass due">Pass due</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </p>
+        </div>
+      </div>
+
+      <div class="item item-3">
+        <div class="calendar-zone">
+          <div class="calendar-zone-top">
+            <div class="today">
+              <button id="btn-today"><p>Today</p></button>
             </div>
-            <div class="right-component">
-                <div class="calendar-zone">
-                    <div class="calendar-zone-top">
-                        <div class="today">
-                            <button class="btn-today"><p>Today</p></button>
-                        </div>
-                        <div class="day">
-                            <button class = 'Previous_day'><img src="/static/images/Expand_left.svg" style="width: 35px"></button>
-                            <button class = 'Next_day'><img src="/static/images/Expand_right.svg" style="width: 32px"></button>
-                            <p>27.09.2024</p>
-                        </div>
-                        <div class="right">
-                            <div class="view">
-                                <p>Week</p>
-                                <button><img src="/static/images/fi-ss-caret-down.svg"></button>
-                            </div>
-                            <div class="search">
-                                <button class="s"><img src="/static/images/Date_range.svg" style="width: 45px"></button>
-                            </div>
-                        </div>
-                    </div>
-                    <section class="Calender">
-                            <div class="Blank_part"></div>
-                            <div class="weekview_date_header">
-                                <div>
-                                    <p class="day_of_week"></p>
-                                    <p class="calendar-day"></p>
-                                </div>
-                                <div>
-                                    <p class="day_of_week"></p>
-                                    <p class="calendar-day"></p>
-                                </div>
-                                <div>
-                                    <p class="day_of_week"></p>
-                                    <p class="calendar-day"></p>
-                                </div>
-                                <div>
-                                    <p class="day_of_week"></p>
-                                    <p class="calendar-day"></p>
-                                </div>
-                                <div>
-                                    <p class="day_of_week"></p>
-                                    <p class="calendar-day"></p>
-                                </div>
-                                <div>
-                                    <p class="day_of_week"></p>
-                                    <p class="calendar-day"></p>
-                                </div>
-                                <div>
-                                    <p class="day_of_week"></p>
-                                    <p class="calendar-day"></p>
-                                </div>
-                            </div>
-                            <div class="time_interval">
-                                <div class="time">
-                                </div>
-                                <div class="time-slots"></div>
-                            </div> 
-                    </section>
-                </div>
-                <div class="bottom">
-                    <div class="option 1">
-                        <button class="bttn-option 1"><img src="/static/images/Add_round.svg"></button>
-                    </div>
-                    <div class="option 2">
-                        <button class="bttn-option 2"><img src="/static/images/Group_fill.svg"></button>
-                    </div>
-                    <div class="option 3">
-                        <button class="bttn-option 3"><img src="/static/images/Setting_alt_fill.svg"></button>
-                    </div>
-                </div>
+            <div class="day">
+              <button class="Previous_day" onclick="previousWeek()">
+                <img src="../static/Expand_left.svg" style="width: 35px" />
+              </button>
+              <button class="Next_day" onclick="nextWeek()">
+                <img src="../static/Expand_right.svg" style="width: 32px" />
+              </button>
+              <p>27.09.2024</p>
             </div>
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-    </body>
+            <div class="right">
+              <div class="view">
+                <button class="change-view">
+                  <span class="view-text">Week</span>
+                  <img src="../static/fi-ss-caret-down.svg" />
+                </button>
+              </div>
+              <div class="dropdown-menu">
+                <button id="change-day" class="menu-option">Day</button>
+                <button id="change-week" class="menu-option">Week</button>
+                <button id="change-month" class="menu-option">Month</button>
+              </div>
+              <div class="search">
+                <button class="s">
+                  <img src="../static/Date_range.svg" style="width: 45px" />
+                </button>
+              </div>
+            </div>
+            
+          </div>
+
+          <!-- Calendar view -->
+          <div id ='calendar-container'></div>
+        </div>
+
+        <div class="bottom">
+          <div class="option 1">
+            <button class="bttn-option 1">
+              <img src="../static/Add_round.svg" />
+            </button>
+          </div>
+          <div class="option 2">
+            <button class="bttn-option 2">
+              <img src="../static/Group_fill.svg" />
+            </button>
+          </div>
+          <div class="option 3">
+            <button class="bttn-option 3">
+              <img src="../static/Setting_alt_fill.svg" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const socket = io();
+      socket.on('connect', () => {
+        console.log('Connected to server');
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../static/js/analysis.js" defer></script>
+    <script src="../static/js/utils.js" defer></script>
+    <script src="../static/js/api.js" defer></script>
+    <script src="../static/js/week_view.js" defer></script>
+    <script src="../static/js/week_task.js" defer></script>
+    <script src="../static/js/month_view.js" defer></script>
+    <script src="../static/js/modal.js" defer></script>
+    <script src="../static/js/chatbot.js" defer></script>
+    <!-- <script src="../static/js/progressTracker.js" defer></script> -->
+    <script src="../static/js/functionality.js" defer></script>
+    <script src="../static/js/main.js" defer></script>
+      <script>
+      socket.on('new_data', (taskData) => {
+        console.log('WENT HEREEE');
+        console.log('taskData HEREEE', taskData);
+        addTaskToCalendarFromDB(taskData);
+      });
+    </script>
+  </body>
 </html>

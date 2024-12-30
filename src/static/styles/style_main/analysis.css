@@ -1,0 +1,784 @@
+.upper {
+    display: flex;
+    justify-content: space-between;
+    font-size: 22px;
+    font-weight: 600;
+  }
+  
+  
+  .item-1 button {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 0;
+    color: white;
+  }
+  
+  .slide-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .slide-content {
+    flex: 1;
+    display: flex;
+    min-height: 0; /* Important for nested flex containers */
+    width: 100%;
+    transition: transform 0.3s ease;
+  }
+  
+  .display-zone {
+    min-width: 100%;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+    flex-shrink: 0;
+    overflow-y: auto;
+     /* Hide scrollbar by default */
+     -ms-overflow-style: none;  /* IE and Edge */
+     scrollbar-width: none;  /* Firefox */
+  }
+  
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .display-zone::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Show scrollbar when scrolling */
+  .display-zone:hover::-webkit-scrollbar,
+  .display-zone:active::-webkit-scrollbar,
+  .display-zone:focus::-webkit-scrollbar {
+    display: block;
+    width: 6px;
+  }
+  
+  /* Scrollbar styles - only visible when scrolling */
+  .display-zone:hover::-webkit-scrollbar-track,
+  .display-zone:active::-webkit-scrollbar-track,
+  .display-zone:focus::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+  }
+  
+  .display-zone:hover::-webkit-scrollbar-thumb,
+  .display-zone:active::-webkit-scrollbar-thumb,
+  .display-zone:focus::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+  }
+  
+  .display-zone:hover::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.4);
+  }
+  
+  /* Show scrollbar when scrolling for Firefox */
+  .display-zone {
+    scrollbar-width: none;
+  }
+  
+  .chart {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+  }
+  
+  .chart h2 {
+    font-size: 20px;
+    font-weight: 500;
+    margin-top: -5px;
+  }
+  
+  /* progress bar */
+  
+  .chart-1 {
+    gap: 20px;
+  }
+  
+  .progress-bar {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 18px;
+    width: 100%;
+  }
+  
+  .info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    font-weight:600;
+  }
+  
+  #progress-container {
+    box-sizing: border-box;
+    width: 100%;
+    height: 8px;
+    background-color: var(--calendarzone-color);
+    border-radius: 15px;
+    overflow: hidden;
+  }
+  
+  #progress-bar {
+    height: 100%;
+    width: 0;
+    background-color: var(--button-color);
+    transition: width 0.5s;
+  }
+  
+  .bottom-part {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  #indicator {
+    text-align: center;
+  }
+  .dot-container {
+    display: flex;
+    justify-content: center;
+    gap: 8px; /* Space between dots */
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #ced4da; /* Default color for inactive dots */
+    transition: transform 0.3s ease; /* Smooth transition for size change */
+  }
+  .dot.active {
+    transform: scale(1.5); /* Enlarge the active dot */
+    background-color: white;
+  }
+  
+  .chart-expand {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .chart-expand h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: white;
+  }
+  
+  .chart-zone {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 1fr;
+    gap: 2rem;
+  }
+  
+  .chart-zone-left {
+    grid-row: 1 / 2;
+    grid-column: 1 / 2;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  
+  .progress-bar-expand {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .info-expand {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  
+  #progress-container-expand {
+    box-sizing: border-box;
+    width: 100%;
+    height: 10px;
+    background-color: var(--calendarzone-color);
+    border-radius: 15px;
+    overflow: hidden;
+  }
+  
+  #progress-bar-expand {
+    height: 100%;
+    width: 0;
+    background-color: var(--button-color);
+    transition: width 0.5s;
+  }
+  
+  .chart-zone-right {
+    grid-row: 1 / 2;
+    grid-column: 2 / 3;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    gap: 0.5rem;
+    margin-right: -1rem;
+    margin-top: 1rem;
+  }
+  
+  .chart-zone-right h3 {
+    font-size: 20px;
+    font-weight: 600;
+    background: linear-gradient(to left, white, #edf2fb, white, #edf2fb, white);
+    background-size: 200%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: animate-gradient 2.5s linear infinite;
+  }
+  
+  @keyframes animate-gradient {
+    to {
+      background-position: 200%;
+    }
+  }
+  
+  .textarea-container-1 {
+    width: 95%;
+    position: relative;
+    height: 210px;
+    font-size: 18px;
+  }
+  
+  .textarea-1 {
+    width: 100%;
+    height: 90%;
+    background-size: 200%;
+    border: none;
+    border-radius: 15px;
+    color: white;
+    resize: none;
+    padding: 0.8rem;
+    box-shadow: inset 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+    position: relative;
+    background-color: var(--gradient-color-3);
+    transition: background-color 0.5s ease;
+    overflow-y: auto;
+    z-index: 2;
+  }
+  
+  .textarea-container-1::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 90%;
+    background: linear-gradient(to left, 
+    var(--gradient-color-1), var(--gradient-color-2), var(--gradient-color-1));
+    background-size: 200% 100%;
+    animation: gradientAnimation 1s linear infinite;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    border-radius: 15px;
+    z-index: 1;
+    padding: 0.8rem;
+    
+  }
+  
+  .textarea-container-1.loading::before {
+    opacity: 1;
+  }
+  
+  @keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+  
+  .chart-zone-right textarea:disabled {
+    color: white;
+  }
+  
+  .chart-zone-right textarea::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .chart-zone-right textarea::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);  /* color of the tracking area */
+    border-radius: 20px;
+  }
+  
+  .chart-zone-right textarea::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);  /* color of the scroll thumb */
+    border-radius: 20px;
+  }
+  
+  .chart-zone-right textarea::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.4);  /* color when hovering */
+  
+  }
+  
+  .placeholder {
+    max-width: 80%;
+    color: white;
+    position: absolute;
+    pointer-events: none;
+    white-space: nowrap;
+    overflow: hidden;
+    top: 0.8rem;
+    left: 0.8rem;
+    right: 0.8rem;
+    z-index: 3;
+  }
+  
+  @keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+  }
+  
+  
+  .summary {
+    display: flex;
+    flex-direction: column;
+    font-weight: 500;
+    font-size: 18px;
+  }
+  
+  .bold {
+    font-weight: 600;
+  }
+  
+  /* tasks distribution */
+  
+  .switch-hour {
+    display: flex;
+    justify-content: flex-end;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  
+  .chart-2-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 5px;
+  }
+  
+  .chart-2-items {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .color {
+    width: 50px;
+    height: 20px;
+    border-radius: 5px;
+  }
+  
+  .color-1 {
+    background-color: var(--chart-2-color-1-hover);
+    border: 2px solid rgba(255, 255, 255);
+  }
+  
+  .color-2 {
+    background-color: var(--chart-2-color-2-hover);
+    border: 2px solid rgba(255, 255, 255);
+  }
+  
+  .color-3 {
+    background-color: var(--chart-2-color-3-hover);
+    border: 2px solid rgba(255, 255, 255);
+  }
+  
+  .color-4 {
+    background-color: var(--chart-2-color-4-hover);
+    border: 2px solid rgba(255, 255, 255);
+  }
+  
+  .color-5 {
+    background-color: var(--chart-2-color-5-hover);
+    border: 2px solid rgba(255, 255, 255);
+  }
+  
+  
+  
+  .text {
+    font-size: 18px;
+    font-weight: 600;
+    margin-left: -5px;
+  }
+  
+  .percentage {
+    font-size: 18px;
+    font-weight: 500;
+    width: 40px;
+    text-align: right;
+  }
+  
+  .chart-container {
+    background-color: transparent;
+    border-radius: 10px;
+    width: 100%;
+    height: 250px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  
+  canvas {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .color-expand {
+    width: 50px;
+    height: 20px;
+    border-radius: 5px;
+  }
+  
+  .legend-1 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-right: 1rem;
+    font-size: 18px;
+  }
+  
+  .legend-2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    font-size: 18px;
+  }
+  
+  .legend-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .textarea-container-2 {
+    width: 95%;
+    position: relative;
+    height: 140px;
+  }
+  
+  .textarea-2 {
+    width: 100%;
+    height: 90%;
+    background-size: 200%;
+    border: none;
+    border-radius: 15px;
+    font-size: 18px;
+    color: white;
+    resize: none;
+    padding: 0.8rem;
+    box-shadow: inset 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+    position: relative;
+    background-color: var(--gradient-color-3);
+    transition: background-color 0.5s ease;
+    overflow-y: auto;
+    z-index: 2;
+  }
+  
+  .textarea-container-2::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 90%;
+    background: linear-gradient(to left, 
+    var(--gradient-color-1), var(--gradient-color-2), var(--gradient-color-1));
+    background-size: 200% 100%;
+    animation: gradientAnimation 1s linear infinite;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    border-radius: 15px;
+    z-index: 1;
+    padding: 0.8rem;
+    
+  }
+  
+  .textarea-container-2.loading::before {
+    opacity: 1;
+  }
+  
+  @keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+  
+  .chart-zone-right textarea:disabled {
+    color: white;
+  }
+  
+  .chart-zone-right textarea::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .chart-zone-right textarea::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);  /* color of the tracking area */
+    border-radius: 20px;
+  }
+  
+  .chart-zone-right textarea::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);  /* color of the scroll thumb */
+    border-radius: 20px;
+  }
+  
+  .chart-zone-right textarea::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.4);  /* color when hovering */
+  
+  }
+  
+  .placeholder {
+    max-width: 80%;
+    color: white;
+    position: absolute;
+    pointer-events: none;
+    white-space: nowrap;
+    overflow: hidden;
+    top: 0.8rem;
+    left: 0.8rem;
+    right: 0.8rem;
+    z-index: 3;
+  }
+  
+  @keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+  }
+  
+  /* Priority and Completion */
+  
+  .chart-3-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1rem;
+    font-size: 18px;
+    gap: 1rem;
+  }
+  
+  .priority {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  
+  .title {
+    font-weight: 500;
+  }
+  
+  .priority-ranking {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+  }
+  
+  .priority-bar {
+    height: 8px;
+    flex-grow: 1;
+    margin: 0 10px;
+    border-radius: 4px;
+    background: linear-gradient(to right, var(--analysis-color-1), var(--analysis-color-2));
+    position: relative;
+    display: flex;
+  }
+  
+  .bar-section {
+    height: 100%;
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .tooltip {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    pointer-events: none;
+    display: none;
+    white-space: nowrap;
+    z-index: 1000;
+    transform: translateY(-25px);
+  }
+  /* */
+  
+  .completion {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  
+  .completion-ranking {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+  }
+  
+  .completion-bar {
+    height: 8px;
+    flex-grow: 1;
+    margin: 0 10px;
+    border-radius: 4px;
+    background: linear-gradient(to right, var(--analysis-color-1), var(--analysis-color-2));
+    position: relative;
+    display: flex;
+  }
+  
+  .important {
+    font-weight: 600;
+  }
+  
+  .chart-container-3 {
+    margin-top: -4rem;
+    background-color: transparent;
+    border-radius: 10px;
+    width: 100%;
+    height: 380px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  
+  .third-legend {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-right: 1rem;
+    font-size: 16px;
+  }
+  
+  .color-3-1 {
+    width: 40px;
+    height: 20px;
+    border-radius: 5px;
+    background-color: rgba(67, 97, 238, 0.5);
+    border: 2px solid rgba(67, 97, 238);
+  }
+  
+  .color-3-2 {
+    width: 40px;
+    height: 20px;
+    border-radius: 5px;
+    background-color: rgba(255, 102, 157, 0.5);
+    border: 2px solid rgba(255, 102, 157);
+  }
+  
+  .textarea-container-3 {
+    width: 95%;
+    position: relative;
+    height: 200px;
+  }
+  
+  .textarea-3 {
+    width: 100%;
+    height: 90%;
+    background-size: 200%;
+    border: none;
+    border-radius: 15px;
+    font-size: 18px;
+    color: white;
+    resize: none;
+    padding: 0.8rem;
+    box-shadow: inset 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+    position: relative;
+    background-color: var(--gradient-color-3);
+    transition: background-color 0.5s ease;
+    overflow-y: auto;
+    z-index: 2;
+  }
+  
+  .textarea-container-3::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 90%;
+    background: linear-gradient(to left, 
+    var(--gradient-color-1), var(--gradient-color-2), var(--gradient-color-1));
+    background-size: 200% 100%;
+    animation: gradientAnimation 1s linear infinite;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    border-radius: 15px;
+    z-index: 1;
+    padding: 0.8rem;
+    
+  }
+  
+  .textarea-container-3.loading::before {
+    opacity: 1;
+  }
+  
+  @keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+  
+  
+  .chart-zone-right textarea:disabled {
+    color: white;
+  }
+  
+  .chart-zone-right textarea::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .chart-zone-right textarea::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);  /* color of the tracking area */
+    border-radius: 20px;
+  }
+  
+  .chart-zone-right textarea::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);  /* color of the scroll thumb */
+    border-radius: 20px;
+  }
+  
+  .chart-zone-right textarea::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.4);  /* color when hovering */
+  
+  }
+  
+  .placeholder {
+    max-width: 80%;
+    color: white;
+    position: absolute;
+    pointer-events: none;
+    white-space: nowrap;
+    overflow: hidden;
+    top: 0.8rem;
+    left: 0.8rem;
+    right: 0.8rem;
+    z-index: 3;
+  }
+  
+  @keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+  }

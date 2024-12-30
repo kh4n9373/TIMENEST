@@ -592,6 +592,22 @@
             "startTime": "2024-10-11T18:45:00.000Z",
             "endTime": "2024-10-11T21:00:00.000Z",
             "taskcolor": "#ff0000"
+        },
+        {
+            "userID": "628fecb264d2e97260acac7da9be7651fe85f64c85334e8026a30eeed7ee460d",
+            "taskName": "Gym",
+            "taskDescription": "Hit the fucking gym\n",
+            "startTime": "2024-10-14T11:30:00.000Z",
+            "endTime": "2024-10-14T13:00:00.000Z",
+            "taskcolor": "#000000"
+        },
+        {
+            "userID": "628fecb264d2e97260acac7da9be7651fe85f64c85334e8026a30eeed7ee460d",
+            "taskName": "going outside",
+            "taskDescription": "",
+            "startTime": "2024-11-07T19:00:00.000Z",
+            "endTime": "2024-11-07T20:00:00.000Z",
+            "taskcolor": ""
         }
     ],
     "group": [],

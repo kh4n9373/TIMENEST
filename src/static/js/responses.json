@@ -1,0 +1,11 @@
+{
+    "progress": {
+      "response": "Great job maintaining a steady pace with a 70% task completion rate weekly and an impressive 75% monthly rate! This shows you're consistently making progress and staying on top of your tasks."
+    },
+    "tasks": {
+      "response": "Your task distribution shows a balanced approach across different areas. Development takes up 35%, Design 25%, Marketing 20%, Growth 15%, and Other activities 5% of your total tasks."
+    },
+    "priority-completion": {
+      "response": "You've been doing a great job prioritizing your tasks. You've completed 80% of your high-priority tasks, 70% of your medium-priority tasks, and 60% of your low-priority tasks."
+    }
+}

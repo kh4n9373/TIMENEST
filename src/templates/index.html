@@ -1,201 +1,260 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="../static/TIMENEST-05.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Catamaran:wght@100..900&family=Outfit:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="../static/styles/style.css" />
+    <title>Timenest</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="static/TIMENEST-05.svg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Catamaran:wght@100..900&family=Outfit:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
-  <title>Timenest</title>
-</head>
-
-<body>
-  <div class="partone">
-    <header>
-      <nav class="nav-bar" id="navbar">
-        <div class="nav-wrapper">
-          <a href="#"><img id="logo" src="/static/images/Logo_Landing.svg" alt="timenest"></a>
-          <div class="nav-menu">
-            <ul class="nav-list">
-              <li class="nav-items"><a href="#hero">Home</a></li>
-              <li class="nav-items"><a href="#footer">About</a></li>
-              <li class="nav-items"><a href="#footer">Contact</a></li>
-            </ul>
-            <button class="button" onclick="window.location.href='/create-account';">Login</button>
+  <body>
+    <div class="partone">
+      <header>
+        <nav class="nav-bar" id="navbar">
+          <div class="nav-wrapper">
+            <a href="#"
+              ><img id="logo" src="../static/Logo_Landing.svg" alt="timenest"
+            /></a>
+            <div class="nav-menu">
+              <ul class="nav-list">
+                <li class="nav-items"><a href="#hero">Home</a></li>
+                <li class="nav-items"><a href="#footer">About</a></li>
+                <li class="nav-items"><a href="#footer">Contact</a></li>
+              </ul>
+              <button
+                class="button"
+                onclick="window.location.href='/create-account';"
+              >
+                Login
+              </button>
+            </div>
           </div>
-        </div>
-      </nav>
-    </header>
-    <div class="hero" id="hero">
+        </nav>
+      </header>
+      <div class="hero" id="hero">
+        <section>
+          <div class="container">
+            <div class="even-columns">
+              <div class="left-side">
+                <img
+                  src="../static/Desktop - 1 - Main_Resize_Blue.png"
+                  alt="interface"
+                  class=""
+                />
+              </div>
+              <div class="right-side">
+                <h1 class="heading-hero">
+                  <span id="content1">The Google Calendar</span>
+                  <span id="content2">replacement you've</span>
+                  <span id="content3">been waiting for.</span>
+                </h1>
+                <hr class="hr-hero" />
+                <button
+                  class="hero-button-special"
+                  onclick="window.location.href='/create-account';"
+                >
+                  Login
+                </button>
+                <button
+                  class="hero-button-special"
+                  onclick="window.location.href='/create-account';"
+                >
+                  Sign Up
+                </button>
+                <button class="hero-button-special">
+                  Download for Windows/MacOS
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+    <div class="break">
+      <div class="scroller" data-speed="fast">
+        <ul class="tag-list scroller__inner">
+          <li>
+            <p>“Timenest is a great name."</p>
+            <i class="fa-brands fa-github" style="color: #3148e6"></i>
+          </li>
+          <li>
+            <p>“We never knew we need this."</p>
+            <i class="fa-brands fa-facebook" style="color: #3148e6"></i>
+          </li>
+          <li>
+            <p>“We freak out because it's so good.”</p>
+            <i class="fa-brands fa-medium" style="color: #3148e6"></i>
+          </li>
+          <li>
+            <p>“I need Premium Plan.”</p>
+            <i class="fa-brands fa-discord" style="color: #3148e6"></i>
+          </li>
+          <li>
+            <p>“We hope we get this sooner.”</p>
+            <i class="fa-brands fa-telegram" style="color: #3148e6"></i>
+          </li>
+          <li>
+            <p>“Award-winning website, no doubt.”</p>
+            <i class="fa-brands fa-apple" style="color: #3148e6"></i>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="parttwo">
       <section>
         <div class="container">
-          <div class="even-columns">
-            <div class="left-side">
-              <img src="/static/images/Desktop - 1 - Main_Resize_Blue.png" alt="interface" class="">
+          <div class="text-box">
+            <div class="text-item">
+              <h2 class="heading-1-s2">
+                A website that doesn't just meet your needs — it anticipates
+                them.
+              </h2>
+              <p class="text-1-s2">
+                Wise and concise with the integration of AI, Timenest shapes the
+                way you work.
+              </p>
             </div>
-            <div class="right-side">
-              <h1 class="heading-hero"><span id="content1">The Google Calendar</span>
-                <span id="content2">replacement you've</span>
-                <span id="content3">been waiting for.</span></h1>
-              <hr class="hr-hero">
-              <button class="hero-button-special" onclick="window.location.href='/create-account';">Login</button>
-              <button class="hero-button-special" onclick="window.location.href='/create-account';">Sign Up</button>
-              <button class="hero-button-special">Download for Windows/MacOS</button>
+          </div>
+          <img
+            src="../static/Desktop - 1 - Main_Resize_Pink.png"
+            alt="interface2"
+            class=""
+          />
+          <div class="text-box">
+            <div class="text-item">
+              <h2 class="heading-2-s2">Your life, your productivity.</h2>
+              <p class="text-2-s2">
+                Enhance productivity with Timenest's personalized scheduling and
+                AI chatbot for seamless task management.
+              </p>
             </div>
           </div>
         </div>
       </section>
     </div>
-  </div>
-  <div class="break">
-    <div class="scroller" data-speed="fast">
-      <ul class="tag-list scroller__inner">
-        <li>
-          <p>“Timenest is a great name."</p>
-          <i class="fa-brands fa-github" style="color: #3148e6;"></i>
-        </li>
-        <li>
-          <p>“We never knew we need this."</p>
-          <i class="fa-brands fa-facebook" style="color: #3148e6;"></i>
-        </li>
-        <li>
-          <p>“We freak out because it's so good.”</p>
-          <i class="fa-brands fa-medium" style="color: #3148e6;"></i>
-        </li>
-        <li>
-          <p>“I need Premium Plan.”</p>
-          <i class="fa-brands fa-discord" style="color: #3148e6;"></i>
-        </li>
-        <li>
-          <p>“We hope we get this sooner.”</p>
-          <i class="fa-brands fa-telegram" style="color: #3148e6;"></i>
-        </li>
-        <li>
-          <p>“Award-winning website, no doubt.”</p>
-          <i class="fa-brands fa-apple" style="color: #3148e6;"></i>
-        </li>
-      </ul>
-    </div>
-  </div>
-  <div class="parttwo">
-    <section>
+    <div class="footer" id="footer">
       <div class="container">
-        <div class="text-box">
-          <div class="text-item">
-            <h2 class="heading-1-s2">A website that doesn't just meet your
-              needs — it anticipates them.</h2>
-            <p class="text-1-s2">Wise and concise with the integration of AI, Timenest shapes the way you work.</p>
+        <div class="footer-container">
+          <div class="ls">
+            <a href="#hero"
+              ><img src="../static/Logo_Landing.svg" alt="timenest"
+            /></a>
+            <ul>
+              <li>
+                <a
+                  href="https://github.com/INSANE-CLUTCH/TIMENEST"
+                  target="_blank"
+                  ><i class="fa-brands fa-github" style="color: #fffcec"></i
+                ></a>
+              </li>
+              <li>
+                <a href="#"
+                  ><i class="fa-brands fa-linkedin" style="color: #fffcec"></i
+                ></a>
+              </li>
+              <li>
+                <a href="#"
+                  ><i class="fa-brands fa-facebook" style="color: #fffcec"></i
+                ></a>
+              </li>
+            </ul>
           </div>
-        </div>
-        <img src="/static/images/Desktop - 1 - Main_Resize_Pink.png" alt="interface2" class="">
-        <div class="text-box">
-          <div class="text-item">
-            <h2 class="heading-2-s2">Your life, your productivity.</h2>
-            <p class="text-2-s2">Enhance productivity with Timenest's personalized scheduling and AI chatbot 
-              for seamless task management.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-  </div>
-  <div class="footer" id="footer">
-    <div class="container">
-      <div class="footer-container">
-        <div class="ls">
-          <a href="#hero"><img src="/static/images/Logo_Landing.svg" alt="timenest"></a>
-          <ul>
-            <li><a href="https://github.com/INSANE-CLUTCH/TIMENEST" target="_blank"><i class="fa-brands fa-github" style="color: #FFFCEC;"></i></a></li>
-            <li><a href="#"><i class="fa-brands fa-linkedin" style="color: #FFFCEC;"></i></a></li>
-            <li><a href="#"><i class="fa-brands fa-facebook" style="color: #FFFCEC;"></i></a></li>
-          </ul>
-        </div>
-        <div class="rs">
-          <hr class="hr-footer">
-          <div class="rs-text">
-            <p>Proudly made by Clutch</p>
-            <p>Hanoi, Vietnam</p>
+          <div class="rs">
+            <hr class="hr-footer" />
+            <div class="rs-text">
+              <p>Proudly made by Clutch</p>
+              <p>Hanoi, Vietnam</p>
+            </div>
           </div>
         </div>
       </div>
+      <p class="copyright">© 2024 Timenest. All rights reserved.</p>
     </div>
-    <p class="copyright">© 2024 Timenest. All rights reserved.</p>
-  </div>
-  <script type="module" src="../main.js"></script>
-  <script>
-    let lastScrollTop = 0;
-    const navbar = document.getElementById('navbar');
+    <script type="module" src="../static/js/main.js"></script>
+    <script>
+      let lastScrollTop = 0;
+      const navbar = document.getElementById('navbar');
 
-    // Scroll event listener
-    window.addEventListener('scroll', function () {
-        let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      // Scroll event listener
+      window.addEventListener('scroll', function () {
+        let scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
 
         window.requestAnimationFrame(() => {
-            // Make the background transparent at the top of the page
-            if (scrollTop === 0) {
-                navbar.style.backgroundColor = 'transparent';
-                navbar.style.top = '0'; // Ensure the navbar stays fixed at the top
-                navbar.style.boxShadow = 'none'; // Optional: remove shadow at the top
-            } else {
-                navbar.style.backgroundColor = '#3148e6'; // Add background when scrolling
-                navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)'; // Add shadow when scrolling
-            }
-
-            // Hide navbar when scrolling down
-            if (scrollTop > lastScrollTop && scrollTop > 0) {
-                navbar.style.top = '-140px'; // Hide navbar on scroll down
-            } else {
-                navbar.style.top = '0'; // Show navbar on scroll up
-            }
-
-            lastScrollTop = scrollTop;
-        });
-    });
-
-    // Ensure the correct background color is set when the page is loaded or refreshed
-    document.addEventListener('DOMContentLoaded', () => {
-        if (window.pageYOffset === 0) {
+          // Make the background transparent at the top of the page
+          if (scrollTop === 0) {
             navbar.style.backgroundColor = 'transparent';
-            navbar.style.top = '0'; // Ensure navbar is visible at the top when page loads
-            navbar.style.boxShadow = 'none'; // Remove shadow at the top
-        } else {
-            navbar.style.backgroundColor = '#3148e6';
-            navbar.style.top = '0'; // Keep the navbar visible
-            navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
-        }
-    });
+            navbar.style.top = '0'; // Ensure the navbar stays fixed at the top
+            navbar.style.boxShadow = 'none'; // Optional: remove shadow at the top
+          } else {
+            navbar.style.backgroundColor = '#3148e6'; // Add background when scrolling
+            navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)'; // Add shadow when scrolling
+          }
 
-    const scrollers = document.querySelectorAll(".scroller");
+          // Hide navbar when scrolling down
+          if (scrollTop > lastScrollTop && scrollTop > 0) {
+            navbar.style.top = '-140px'; // Hide navbar on scroll down
+          } else {
+            navbar.style.top = '0'; // Show navbar on scroll up
+          }
 
-    // If a user hasn't opted in for recuded motion, then we add the animation
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      addAnimation();
-    }
-
-    function addAnimation() {
-      scrollers.forEach((scroller) => {
-        // add data-animated="true" to every `.scroller` on the page
-        scroller.setAttribute("data-animated", true);
-
-        // Make an array from the elements within `.scroller-inner`
-        const scrollerInner = scroller.querySelector(".scroller__inner");
-        const scrollerContent = Array.from(scrollerInner.children);
-
-        // For each item in the array, clone it
-        // add aria-hidden to it
-        // add it into the `.scroller-inner`
-        scrollerContent.forEach((item) => {
-          const duplicatedItem = item.cloneNode(true);
-          duplicatedItem.setAttribute("aria-hidden", true);
-          scrollerInner.appendChild(duplicatedItem);
+          lastScrollTop = scrollTop;
         });
       });
-    }
-  </script>
-</body>
+
+      // Ensure the correct background color is set when the page is loaded or refreshed
+      document.addEventListener('DOMContentLoaded', () => {
+        if (window.pageYOffset === 0) {
+          navbar.style.backgroundColor = 'transparent';
+          navbar.style.top = '0'; // Ensure navbar is visible at the top when page loads
+          navbar.style.boxShadow = 'none'; // Remove shadow at the top
+        } else {
+          navbar.style.backgroundColor = '#3148e6';
+          navbar.style.top = '0'; // Keep the navbar visible
+          navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+        }
+      });
+
+      const scrollers = document.querySelectorAll('.scroller');
+
+      // If a user hasn't opted in for recuded motion, then we add the animation
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        addAnimation();
+      }
+
+      function addAnimation() {
+        scrollers.forEach((scroller) => {
+          // add data-animated="true" to every `.scroller` on the page
+          scroller.setAttribute('data-animated', true);
+
+          // Make an array from the elements within `.scroller-inner`
+          const scrollerInner = scroller.querySelector('.scroller__inner');
+          const scrollerContent = Array.from(scrollerInner.children);
+
+          // For each item in the array, clone it
+          // add aria-hidden to it
+          // add it into the `.scroller-inner`
+          scrollerContent.forEach((item) => {
+            const duplicatedItem = item.cloneNode(true);
+            duplicatedItem.setAttribute('aria-hidden', true);
+            scrollerInner.appendChild(duplicatedItem);
+          });
+        });
+      }
+    </script>
+  </body>
 </html>

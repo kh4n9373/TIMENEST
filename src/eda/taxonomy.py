@@ -240,3 +240,6 @@ def draw_radar_chart(data):
     return
 if __name__ == '__main__':
     print(draw_radar_chart(get_user_information(client=client,user_id='109356546733291536481')))
+    
+    
+

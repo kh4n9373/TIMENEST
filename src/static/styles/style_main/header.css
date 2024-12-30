@@ -1,0 +1,75 @@
+/* header */
+.header {
+  display: grid;
+  height: 3.5vh;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  margin-top: 0.4rem;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
+}
+
+.h-col-1 {
+  grid-row: 1 / 2;
+  grid-column: 1 / 2;
+  display: flex;
+  gap: 1rem;
+}
+
+.group-right {
+  grid-row: 1 / 2;
+  grid-column: 2 / 6;
+  display: flex;
+  justify-content: space-between;
+}
+
+.header button {
+  height: 40px;
+  width: 40px;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  border-radius: 10px;
+  padding: 0;
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header button:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+#logo {
+  margin-top: 4px;
+  margin-left: 0.5rem;
+  transition: transform 0.4s ease;
+}
+
+#logo:hover {
+  transform: scale(1.1);
+}
+
+.undo-redo {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.undo {
+}
+
+.group-right p {
+  font-family: 'Outfit', sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  margin-top: 5px;
+  cursor: pointer;
+}
+
+.rightmost {
+  display: flex;
+  gap: 0.5rem;
+}

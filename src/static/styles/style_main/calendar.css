@@ -1,0 +1,168 @@
+.calendar-zone {
+  background-color: var(--calendarzone-color);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  padding: 1rem;
+  gap: 1rem;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+#calendar-container {
+  height: 900px;
+}
+
+.calendar-zone-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 22px;
+  font-weight: 600;
+  color: white;
+  gap: 1rem;
+}
+
+#btn-today {
+  background-color: var(--button-color);
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 1.2rem 3rem;
+  border-radius: 15px;
+  transition: all 0.3s ease;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+#btn-today:hover {
+  background-color: var(--button-hover-color);
+  transform: scale(1.02);
+}
+
+#btn-today p {
+  color: white;
+}
+
+.day {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 15px;
+  padding: 1.2rem 2.5rem;
+  background-color: var(--button-color);
+  transition: all 0.3s ease;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.day button {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.day button:first-child {
+  margin-left: -0.5rem;
+  margin-right: 1rem;
+}
+
+.day p {
+  margin-left: 1.5rem;
+}
+
+.day:hover {
+  background-color: var(--button-hover-color);
+  transform: scale(1.02);
+}
+
+.right {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  width: 15%;
+  position: relative;
+}
+.view {
+  width: 50%;
+  height: 72.2px;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: var(--button-color);
+}
+
+.change-view {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  padding-right: 10px; /* Thêm padding để chữ và icon không dính vào mép */
+  padding-left: 10px;
+  color: white; /* Chữ trắng */
+  border-radius: 10px; /* Cong góc */
+  border: 0;
+}
+
+.change-view span,
+.change-view img {
+  pointer-events: none; /* Ngăn sự kiện trên phần tử con */
+}
+
+.dropdown-menu {
+  display: none; /* Ẩn dropdown menu theo mặc định */
+  position: absolute; /* Định vị menu */
+  top: 100%; /* Đặt menu ngay bên dưới button */
+  left: 0;
+  width: 100px;
+  background-color: white; /* Màu nền menu */
+  border: 1px solid #ccc; /* Đường viền menu */
+  border-radius: 10px; /* Cong góc menu */
+  z-index: 10; /* Đảm bảo hiển thị trên các phần tử khác */
+}
+
+.menu-option {
+  padding: 10px 15px; /* Tạo khoảng cách bên trong */
+  text-align: left; /* Căn trái chữ */
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.menu-option:hover {
+  background-color: #f0f0f0; /* Thay đổi màu nền khi hover */
+}
+
+.search {
+  display: flex;
+  justify-content: center;
+  align-self: center;
+}
+
+.search button {
+  background-color: var(--button-color);
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 0.85rem 0.85rem;
+  border-radius: 15px;
+  transition: all 0.3s ease;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.search button img {
+  object-fit: contain;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.search button:hover,
+.view:hover,
+.change-view:hover {
+  background-color: var(--button-hover-color);
+  transform: scale(1.02);
+}

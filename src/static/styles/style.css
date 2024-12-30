@@ -191,7 +191,7 @@
   }
   
   .partone {
-    background-image: url("../images/Background-01.png");
+    background-image: url("../Background-01.svg");
     background-size: cover;
   }
   
@@ -428,7 +428,7 @@
   
   .footer {
     height: 250px;
-    background-image: url('../images/Background-01.png');
+    background-image: url('../Background-01.svg');
     background-size: cover;
   }
   
